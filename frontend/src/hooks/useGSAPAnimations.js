@@ -99,14 +99,14 @@ export function useHeroAnimation() {
       if (floatingBadge1Ref.current) {
         tl.fromTo(floatingBadge1Ref.current,
           { opacity: 0, scale: 0, rotate: -12 },
-          { opacity: 1, scale: 1, rotate: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' },
+          { opacity: 1, scale: 1, rotate: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)', clearProps: 'transform' },
           '-=0.5'
         );
       }
       if (floatingBadge2Ref.current) {
         tl.fromTo(floatingBadge2Ref.current,
           { opacity: 0, scale: 0, rotate: 12 },
-          { opacity: 1, scale: 1, rotate: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)' },
+          { opacity: 1, scale: 1, rotate: 0, duration: 0.6, ease: 'elastic.out(1, 0.5)', clearProps: 'transform' },
           '-=0.4'
         );
       }
@@ -140,18 +140,38 @@ export function useHeroAnimation() {
       }
 
       // 10. Hero image parallax on scroll
-      if (imageCardRef.current) {
-        gsap.to(imageCardRef.current, {
-          y: -50,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top top',
-            end: 'bottom top',
-            scrub: 1.5,
-          },
-        });
-      }
+      // if (imageCardRef.current) {
+      //   gsap.to(imageCardRef.current, {
+      //     y: -50,
+      //     ease: 'none',
+      //     scrollTrigger: {
+      //       trigger: sectionRef.current,
+      //       start: 'top top',
+      //       end: 'bottom top',
+      //       scrub: 1.5,
+      //     },
+      //   });
+      // }
+      // 10. Hero image parallax on scroll
+if (imageCardRef.current) {
+  gsap.fromTo(
+    imageCardRef.current,
+    {
+      y: 0,
+    },
+    {
+      y: -50,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: sectionRef.current,
+        start: 'top top',
+        end: 'bottom top',
+        scrub: 1.5,
+        invalidateOnRefresh: true,
+      },
+    }
+  );
+}
 
     }, sectionRef);
 
@@ -823,7 +843,7 @@ export function useNavbarAnimation() {
       if (announcementRef.current) {
         gsap.fromTo(announcementRef.current,
           { y: -50, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out' }
+          { y: 0, opacity: 1, duration: 0.5, ease: 'power3.out', clearProps: 'transform' }
         );
       }
 
@@ -831,7 +851,7 @@ export function useNavbarAnimation() {
       if (navRef.current) {
         gsap.fromTo(navRef.current,
           { y: -80, opacity: 0 },
-          { y: 0, opacity: 1, duration: 0.6, delay: 0.1, ease: 'power4.out' }
+          { y: 0, opacity: 1, duration: 0.6, delay: 0.1, ease: 'power4.out', clearProps: 'transform' }
         );
 
         // Desktop nav links stagger

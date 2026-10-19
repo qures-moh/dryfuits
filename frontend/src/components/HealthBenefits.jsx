@@ -1,4 +1,3 @@
-
 import React from 'react';
 import {
   Heart,
@@ -15,6 +14,7 @@ import { useSiteData } from '../context/SiteDataContext';
 
 export const HealthBenefits = () => {
   const { settings } = useSiteData();
+
   const {
     sectionRef,
     headerRef,
@@ -119,19 +119,19 @@ export const HealthBenefits = () => {
         </div>
 
         <div
-          className="origin-story-banner"
+          className="approach-banner"
           ref={bannerRef}
         >
-          <div className="origin-story-content">
-            <span className="origin-subtitle">
+          <div className="approach-content">
+            <span className="approach-subtitle">
               OUR APPROACH
             </span>
 
-            <h3 className="origin-title">
+            <h3 className="approach-title">
               Nature’s Goodness, Thoughtfully Presented
             </h3>
 
-            <p className="origin-text">
+            <p className="approach-text">
               From everyday snacking to thoughtful gifting,
               Golden Harvest brings together dry fruits and gift
               buckets for life’s little moments and special occasions.
@@ -139,8 +139,8 @@ export const HealthBenefits = () => {
               special.
             </p>
 
-            <div className="origin-stats-row">
-              <div className="origin-stat">
+            <div className="approach-stats">
+              <div className="approach-stat">
                 <strong>
                   <Leaf size={19} strokeWidth={1.7} />
                 </strong>
@@ -148,7 +148,7 @@ export const HealthBenefits = () => {
                 <span>Natural Ingredients</span>
               </div>
 
-              <div className="origin-stat">
+              <div className="approach-stat">
                 <strong>
                   <Heart size={19} strokeWidth={1.7} />
                 </strong>
@@ -156,7 +156,7 @@ export const HealthBenefits = () => {
                 <span>Everyday Enjoyment</span>
               </div>
 
-              <div className="origin-stat">
+              <div className="approach-stat">
                 <strong>
                   <Gift size={19} strokeWidth={1.7} />
                 </strong>
@@ -166,11 +166,11 @@ export const HealthBenefits = () => {
             </div>
           </div>
 
-          <div className="origin-story-img-wrap">
+          <div className="approach-image-wrapper">
             <img
               src="/images/hero.jpg"
               alt="Golden Harvest dry fruits and gift collection"
-              className="origin-story-img"
+              className="approach-image"
               loading="lazy"
             />
           </div>
@@ -179,3 +179,5 @@ export const HealthBenefits = () => {
     </section>
   );
 };
+
+export default HealthBenefits;

@@ -11,7 +11,6 @@ import {
   ArrowRight,
   Truck,
   ShieldCheck,
-  Search,
   Home,
   ShoppingBag,
   Star
@@ -65,8 +64,39 @@ export const Navbar = ({
     };
   }, [isMobileMenuOpen]);
 
+  const scrollToContact = () => {
+    const section = document.getElementById(
+      'contact-section'
+    );
+
+    if (!section) return;
+
+    const navbar = document.querySelector(
+      '.gh-navbar'
+    );
+
+    const navbarHeight = navbar
+      ? navbar.getBoundingClientRect().height
+      : 90;
+
+    const sectionTop =
+      section.getBoundingClientRect().top +
+      window.scrollY;
+
+    window.scrollTo({
+      top: sectionTop - navbarHeight - 20,
+      behavior: 'smooth'
+    });
+  };
+
   const handleNavClick = (tabId) => {
     setIsMobileMenuOpen(false);
+
+    if (tabId === 'contact') {
+      setActiveTab('contact');
+      scrollToContact();
+      return;
+    }
 
     if (tabId === 'builder') {
       setActiveTab('builder');
@@ -88,8 +118,7 @@ export const Navbar = ({
     const sectionIds = {
       collection: 'collection-section',
       health: 'health-section',
-      reviews: 'reviews-section',
-      contact: 'contact-section'
+      reviews: 'reviews-section'
     };
 
     if (tabId === 'home') {
@@ -113,44 +142,10 @@ export const Navbar = ({
     }
   };
 
-  const handleSearchSubmit = (event) => {
-    event.preventDefault();
-
-    setIsMobileMenuOpen(false);
-
-    if (typeof onNavigate === 'function') {
-      onNavigate('collection');
-      return;
-    }
-
-    setActiveTab('collection');
-
-    requestAnimationFrame(() => {
-      requestAnimationFrame(() => {
-        const section =
-          document.getElementById(
-            'collection-section'
-          );
-
-        if (section) {
-          section.scrollIntoView({
-            behavior: 'smooth',
-            block: 'start'
-          });
-        }
-      });
-    });
-  };
-
   const cleanPhone = (
     settings?.phoneNumber ||
     '+91 91795 98991'
   ).replace(/\s+/g, '');
-
-  const cleanWhatsApp = (
-    settings?.whatsappNumber ||
-    '919179598991'
-  ).replace(/\D/g, '');
 
   return (
     <>
@@ -200,32 +195,14 @@ export const Navbar = ({
       </div>
 
       <header
-        className="site-header"
+        className="gh-navbar"
         ref={navRef}
       >
-        <div className="navbar-pill-wrapper">
-          <div className="header-container">
-
-            <button
-              type="button"
-              className="mobile-toggle-btn"
-              onClick={() =>
-                setIsMobileMenuOpen(
-                  (previous) => !previous
-                )
-              }
-              aria-label="Toggle navigation menu"
-              aria-expanded={isMobileMenuOpen}
-            >
-              {isMobileMenuOpen ? (
-                <X size={22} />
-              ) : (
-                <Menu size={22} />
-              )}
-            </button>
+        <div className="gh-navbar-wrapper">
+          <div className="gh-navbar-container">
 
             <div
-              className="brand-logo navbar-brand-logo"
+              className="gh-navbar-logo"
               onClick={() =>
                 handleNavClick('home')
               }
@@ -241,26 +218,26 @@ export const Navbar = ({
                 }
               }}
             >
-              <div className="brand-icon-wrapper navbar-logo-wrapper">
+              <div className="gh-desktop-logo-box">
                 <img
                   src={logoUrl}
                   alt={
                     settings?.brandName ||
                     'Golden Harvest'
                   }
-                  className="brand-logo-img navbar-logo-img"
+                  className="gh-desktop-logo-image"
                   onError={handleLogoError}
                 />
               </div>
             </div>
 
             <nav
-              className="desktop-nav"
+              className="gh-desktop-navigation"
               aria-label="Main navigation"
             >
               <button
                 type="button"
-                className={`nav-link ${
+                className={`gh-nav-link ${
                   activeTab === 'home'
                     ? 'active'
                     : ''
@@ -274,7 +251,7 @@ export const Navbar = ({
 
               <button
                 type="button"
-                className={`nav-link ${
+                className={`gh-nav-link ${
                   activeTab === 'collection'
                     ? 'active'
                     : ''
@@ -288,7 +265,7 @@ export const Navbar = ({
 
               <button
                 type="button"
-                className={`nav-link ${
+                className={`gh-nav-link ${
                   activeTab === 'builder'
                     ? 'active'
                     : ''
@@ -302,7 +279,7 @@ export const Navbar = ({
 
               <button
                 type="button"
-                className={`nav-link ${
+                className={`gh-nav-link ${
                   activeTab === 'health'
                     ? 'active'
                     : ''
@@ -316,7 +293,7 @@ export const Navbar = ({
 
               <button
                 type="button"
-                className={`nav-link ${
+                className={`gh-nav-link ${
                   activeTab === 'reviews'
                     ? 'active'
                     : ''
@@ -330,7 +307,7 @@ export const Navbar = ({
 
               <button
                 type="button"
-                className={`nav-link ${
+                className={`gh-nav-link ${
                   activeTab === 'contact'
                     ? 'active'
                     : ''
@@ -343,10 +320,10 @@ export const Navbar = ({
               </button>
             </nav>
 
-            <div className="header-actions">
+            <div className="gh-desktop-actions">
               <a
                 href={`tel:${cleanPhone}`}
-                className="nav-action-icon-btn"
+                className="gh-call-button"
                 title={`Call Directly: ${
                   settings?.phoneNumber ||
                   '+91 91795 98991'
@@ -358,7 +335,7 @@ export const Navbar = ({
 
               <button
                 type="button"
-                className="nav-primary-pill-btn"
+                className="gh-enquire-button"
                 onClick={() =>
                   handleNavClick('contact')
                 }
@@ -367,6 +344,25 @@ export const Navbar = ({
                 <ArrowRight size={15} />
               </button>
             </div>
+
+            <button
+              type="button"
+              className="gh-mobile-menu-button"
+              onClick={() =>
+                setIsMobileMenuOpen(
+                  (previous) => !previous
+                )
+              }
+              aria-label="Toggle navigation menu"
+              aria-expanded={isMobileMenuOpen}
+            >
+              {isMobileMenuOpen ? (
+                <X size={22} />
+              ) : (
+                <Menu size={22} />
+              )}
+            </button>
+
           </div>
         </div>
       </header>
@@ -378,8 +374,8 @@ export const Navbar = ({
             onClick={() =>
               setIsMobileMenuOpen(false)
             }
-            aria-modal="true"
             role="dialog"
+            aria-modal="true"
             aria-label="Mobile navigation menu"
           >
             <div
@@ -388,10 +384,11 @@ export const Navbar = ({
                 event.stopPropagation()
               }
             >
+
               <div className="mobile-menu-header">
 
                 <div
-                  className="brand-logo navbar-brand-logo"
+                  className="gh-mobile-drawer-logo"
                   onClick={() =>
                     handleNavClick('home')
                   }
@@ -407,14 +404,14 @@ export const Navbar = ({
                     }
                   }}
                 >
-                  <div className="brand-icon-wrapper navbar-logo-wrapper">
+                  <div className="gh-mobile-drawer-logo-box">
                     <img
                       src={logoUrl}
                       alt={
                         settings?.brandName ||
                         'Golden Harvest'
                       }
-                      className="brand-logo-img navbar-logo-img"
+                      className="gh-mobile-drawer-logo-image"
                       onError={handleLogoError}
                     />
                   </div>
@@ -430,45 +427,7 @@ export const Navbar = ({
                 >
                   <X size={20} />
                 </button>
-              </div>
 
-              <div className="mobile-drawer-search">
-                <form
-                  onSubmit={handleSearchSubmit}
-                  className="mobile-search-form"
-                >
-                  <div className="mobile-search-wrapper">
-                    <Search
-                      size={17}
-                      className="mobile-search-icon"
-                    />
-
-                    <input
-                      type="text"
-                      className="mobile-search-input"
-                      placeholder="Search products..."
-                      value={searchQuery}
-                      onChange={(event) =>
-                        setSearchQuery?.(
-                          event.target.value
-                        )
-                      }
-                    />
-
-                    {searchQuery && (
-                      <button
-                        type="button"
-                        className="mobile-search-clear-btn"
-                        onClick={() =>
-                          setSearchQuery?.('')
-                        }
-                        aria-label="Clear search query"
-                      >
-                        <X size={13} />
-                      </button>
-                    )}
-                  </div>
-                </form>
               </div>
 
               <nav
@@ -587,23 +546,6 @@ export const Navbar = ({
               </nav>
 
               <div className="mobile-drawer-footer">
-                <a
-                  href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(
-                    `Hello ${
-                      settings?.brandName ||
-                      'Golden Harvest'
-                    }! I would like to order fresh dry fruits.`
-                  )}`}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="mobile-drawer-whatsapp-btn"
-                >
-                  <MessageCircle size={18} />
-                  <span>
-                    Enquiry on WhatsApp
-                  </span>
-                </a>
-
                 <div className="mobile-drawer-perk">
                   <Truck size={14} />
                   <span>
@@ -620,6 +562,7 @@ export const Navbar = ({
                   </span>
                 </div>
               </div>
+
             </div>
           </div>,
           document.body

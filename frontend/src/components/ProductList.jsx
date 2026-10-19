@@ -12,27 +12,32 @@ import {
   Sun,
   Heart,
   Flame,
-  Leaf,
 } from 'lucide-react';
 import { useProductGridAnimation } from '../hooks/useGSAPAnimations';
 
 const renderCategoryIcon = (iconName, categoryId) => {
   const key = `${iconName || ''} ${categoryId || ''}`.toLowerCase();
+
   if (key.includes('gift') || key.includes('bucket')) {
     return <Gift size={14} className="pill-icon" />;
   }
+
   if (key.includes('nut')) {
     return <Nut size={14} className="pill-icon" />;
   }
+
   if (key.includes('sun') || key.includes('date') || key.includes('fig')) {
     return <Sun size={14} className="pill-icon" />;
   }
+
   if (key.includes('heart') || key.includes('berr') || key.includes('raisin')) {
     return <Heart size={14} className="pill-icon" />;
   }
+
   if (key.includes('flame') || key.includes('spice') || key.includes('seed')) {
     return <Flame size={14} className="pill-icon" />;
   }
+
   return <Sparkles size={14} className="pill-icon" />;
 };
 
@@ -45,6 +50,7 @@ export const ProductList = ({
   onOpenBucketBuilder,
 }) => {
   const { products, categories, settings, loading } = useSiteData();
+
   const {
     gridRef,
     bannerRef,
@@ -53,21 +59,26 @@ export const ProductList = ({
     calloutRef,
   } = useProductGridAnimation();
 
-  const cleanWhatsApp = (settings?.whatsappNumber || '919179598991').replace(/\D/g, '');
+  const cleanWhatsApp = (
+    settings?.whatsappNumber || '919179598991'
+  ).replace(/\D/g, '');
 
   const filteredProducts = useMemo(() => {
     const query = searchQuery.trim().toLowerCase();
 
     return products.filter((product) => {
-      const prodCategory = typeof product.category === 'object' && product.category?.categoryId
-        ? product.category.categoryId
-        : String(product.category || '');
+      const prodCategory =
+        typeof product.category === 'object' &&
+        product.category?.categoryId
+          ? product.category.categoryId
+          : String(product.category || '');
 
       const matchesCategory =
         selectedCategory === 'all' ||
         prodCategory === selectedCategory;
 
       if (!matchesCategory) return false;
+
       if (!query) return true;
 
       const name = product.name?.toLowerCase() || '';
@@ -105,6 +116,7 @@ export const ProductList = ({
         >
           <div className="section-subtitle-wrap justify-center">
             <Sparkles size={15} className="text-gold" />
+
             <span className="section-subtitle">
               {settings?.collectionSubtitle || 'THE COLLECTION'}
             </span>
@@ -122,52 +134,64 @@ export const ProductList = ({
 
         <div
           id="buckets-section"
-          className="clean-bucket-banner"
+          className="gh-bucket-banner"
           ref={bannerRef}
         >
-          <div className="bucket-banner-text">
-            <span className="banner-tag">
+          <div className="gh-bucket-banner-text">
+            <span className="gh-banner-tag">
               <Gift size={14} />
               THOUGHTFUL GIFTING
             </span>
 
-            <h3 className="banner-title">
+            <h3 className="gh-banner-title">
               {settings?.bucketBannerTitle || 'A Gift Made Personal'}
             </h3>
 
-            <p className="banner-sub">
+            <p className="gh-banner-sub">
               {settings?.bucketBannerDescription ||
                 'Create a gift bucket with your preferred selections and make your next occasion more meaningful.'}
             </p>
 
-            <div className="banner-action-buttons">
+            <div className="gh-banner-actions">
               <button
                 type="button"
-                className="banner-cta-btn"
+                className="gh-banner-primary"
                 onClick={onOpenBucketBuilder}
               >
                 <Sparkles size={15} />
+
                 <span>Create Your Bucket</span>
+
                 <ArrowRight size={15} />
               </button>
 
               <a
-                href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(`Hi ${settings?.brandName || 'Golden Harvest'}! I'm interested in dry fruit gift buckets.`)}`}
+                href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(
+                  `Hi ${
+                    settings?.brandName || 'Golden Harvest'
+                  }! I'm interested in dry fruit gift buckets.`
+                )}`}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="banner-secondary-btn"
+                className="gh-banner-secondary"
               >
                 <MessageCircle size={15} />
+
                 <span>Ask on WhatsApp</span>
               </a>
             </div>
           </div>
 
-          <div className="bucket-banner-img-wrap">
+          <div className="gh-bucket-image-wrap">
             <img
-              src={settings?.bucketBannerImage || '/images/bucket_hamper.jpg'}
-              alt={`${settings?.brandName || 'Golden Harvest'} dry fruit gift bucket`}
-              className="bucket-banner-img"
+              src={
+                settings?.bucketBannerImage ||
+                '/images/bucket_hamper.jpg'
+              }
+              alt={`${
+                settings?.brandName || 'Golden Harvest'
+              } dry fruit gift bucket`}
+              className="gh-bucket-image"
               loading="lazy"
             />
           </div>
@@ -193,6 +217,7 @@ export const ProductList = ({
                   aria-pressed={isActive}
                 >
                   {renderCategoryIcon(cat.icon, catId)}
+
                   <span>{cat.name}</span>
                 </button>
               );
@@ -204,7 +229,12 @@ export const ProductList = ({
           <div className="clean-search-pill-bar">
             <span>
               <Search size={14} />
-              Results for <strong>"{searchQuery.trim()}"</strong>
+
+              Results for{' '}
+
+              <strong>
+                "{searchQuery.trim()}"
+              </strong>
             </span>
 
             <button
@@ -213,6 +243,7 @@ export const ProductList = ({
               className="clear-pill-btn"
             >
               <X size={14} />
+
               <span>Clear</span>
             </button>
           </div>
@@ -221,7 +252,10 @@ export const ProductList = ({
         {loading && filteredProducts.length === 0 ? (
           <div className="clean-loading-state text-center py-12">
             <div className="spinner-border text-gold inline-block mb-3" />
-            <p>Loading fresh harvests from our store...</p>
+
+            <p>
+              Loading fresh harvests from our store...
+            </p>
           </div>
         ) : filteredProducts.length > 0 ? (
           <>
@@ -269,6 +303,7 @@ export const ProductList = ({
               onClick={handleReset}
             >
               View Full Collection
+
               <ArrowRight size={15} />
             </button>
           </div>
@@ -279,7 +314,10 @@ export const ProductList = ({
           ref={calloutRef}
         >
           <div className="bottom-callout-content">
-            <h3>Planning a Special Gift?</h3>
+            <h3>
+              Planning a Special Gift?
+            </h3>
+
             <p>
               Get in touch for personal gifting, celebrations,
               and bulk order enquiries.
@@ -288,12 +326,17 @@ export const ProductList = ({
 
           <div className="bottom-callout-actions">
             <a
-              href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(`Hi ${settings?.brandName || 'Golden Harvest'}! I'd like to ask about bulk gifting.`)}`}
+              href={`https://wa.me/${cleanWhatsApp}?text=${encodeURIComponent(
+                `Hi ${
+                  settings?.brandName || 'Golden Harvest'
+                }! I'd like to ask about bulk gifting.`
+              )}`}
               target="_blank"
               rel="noopener noreferrer"
               className="btn-primary"
             >
               <MessageCircle size={16} />
+
               <span>Bulk Gifting</span>
             </a>
 
@@ -303,6 +346,7 @@ export const ProductList = ({
               onClick={handleContact}
             >
               <span>Contact Us</span>
+
               <ArrowRight size={15} />
             </button>
           </div>

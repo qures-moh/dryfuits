@@ -7,6 +7,10 @@ import {
   DRY_FRUIT_FILLERS,
   GIFT_RIBBONS,
 } from '../data/products';
+import api from './axios';
+
+export { api };
+export default api;
 
 export const API_BASE_URL =
   import.meta.env.VITE_API_URL || 'http://localhost:5000/api';
@@ -111,13 +115,8 @@ export const DEFAULT_SETTINGS = {
 
 export const fetchProducts = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/products`);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
+    const res = await api.get('/products');
+    const data = res.data;
 
     if (Array.isArray(data) && data.length > 0) {
       return data.map(normalizeProduct);
@@ -134,16 +133,11 @@ export const fetchProducts = async () => {
 
 export const fetchProductById = async (id) => {
   try {
-    const res = await fetch(
-      `${API_BASE_URL}/products/${encodeURIComponent(id)}`
-    );
+    const res = await api.get(`/products/${encodeURIComponent(id)}`);
+    const data = res.data;
 
-    if (res.ok) {
-      const data = await res.json();
-
-      if (data && (data._id || data.id)) {
-        return normalizeProduct(data);
-      }
+    if (data && (data._id || data.id)) {
+      return normalizeProduct(data);
     }
   } catch (err) {
     console.warn(
@@ -163,13 +157,8 @@ export const fetchProductById = async (id) => {
 
 export const fetchCategories = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/categories`);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
+    const res = await api.get('/categories');
+    const data = res.data;
 
     if (Array.isArray(data) && data.length > 0) {
       return data.map((c) => ({
@@ -192,13 +181,8 @@ export const fetchCategories = async () => {
 
 export const fetchTestimonials = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/testimonials`);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
+    const res = await api.get('/testimonials');
+    const data = res.data;
 
     if (Array.isArray(data) && data.length > 0) {
       return data.map((t) => ({
@@ -224,13 +208,8 @@ export const fetchTestimonials = async () => {
 
 export const fetchFaqs = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/faqs`);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
+    const res = await api.get('/faqs');
+    const data = res.data;
 
     if (Array.isArray(data) && data.length > 0) {
       return data.map((f) => ({
@@ -253,13 +232,8 @@ export const fetchFaqs = async () => {
 
 export const fetchSettings = async () => {
   try {
-    const res = await fetch(`${API_BASE_URL}/settings`);
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
+    const res = await api.get('/settings');
+    const data = res.data;
 
     if (data && typeof data === 'object') {
       return {
@@ -289,15 +263,8 @@ export const fetchSettings = async () => {
 
 export const fetchCustomStudio = async () => {
   try {
-    const res = await fetch(
-      `${API_BASE_URL}/custom-studio`
-    );
-
-    if (!res.ok) {
-      throw new Error(`HTTP error! status: ${res.status}`);
-    }
-
-    const data = await res.json();
+    const res = await api.get('/custom-studio');
+    const data = res.data;
 
     const studioData = data?.data || data;
 

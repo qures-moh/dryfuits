@@ -1,0 +1,3081 @@
+/* ========================================================
+
+   GOLDEN HARVEST - ANIMATION BRAND PALETTE
+
+   ======================================================== */
+
+
+
+:root {
+  --animation-primary: #8A5A2B;
+  --animation-primary-dark: #5A3A1E;
+  --animation-gold: #C59A4A;
+  --animation-cream: #FFFFFF;
+  --animation-text: #2D2521;
+}
+
+
+
+/* ========================================================
+
+
+
+   GOLDEN HARVEST - LUXURY ANIMATIONS SYSTEM
+
+
+
+   Smooth 60fps GPU-Accelerated Micro-Interactions & Physics
+
+
+
+   ======================================================== */
+
+
+
+
+
+
+
+/* 1. KEYFRAME DEFINITIONS */
+
+
+
+
+
+
+
+/* Gentle Floating Physics for Hero Badges */
+
+
+
+@keyframes floatBadgeTop {
+
+
+
+  0%,
+  100% {
+
+
+
+    transform: translateY(0px) rotate(0deg);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: translateY(-9px) rotate(0.6deg);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+@keyframes floatBadgeBottom {
+
+
+
+  0%,
+  100% {
+
+
+
+    transform: translateY(0px) rotate(0deg);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: translateY(-8px) rotate(-0.5deg);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Ambient Radial Glow Pulse behind Hero */
+
+
+
+@keyframes heroGlowPulse {
+
+
+
+  0% {
+
+
+
+    transform: scale(0.95);
+
+
+
+    opacity: 0.45;
+
+
+
+    filter: blur(40px);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: scale(1.12);
+
+
+
+    opacity: 0.75;
+
+
+
+    filter: blur(52px);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: scale(0.95);
+
+
+
+    opacity: 0.45;
+
+
+
+    filter: blur(40px);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* CTA Button Shimmer Light Sweep */
+
+
+
+@keyframes buttonShimmer {
+
+
+
+  0% {
+
+
+
+    transform: translateX(-150%) skewX(-20deg);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: translateX(250%) skewX(-20deg);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Sparkle Star Micro-Twinkle */
+
+
+
+@keyframes sparkleTwinkle {
+
+
+
+  0%,
+  100% {
+
+
+
+    transform: scale(1) rotate(0deg);
+
+
+
+    filter: drop-shadow(0 0 2px rgba(197, 154, 74, 0.4));
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: scale(1.25) rotate(18deg);
+
+
+
+    filter: drop-shadow(0 0 6px rgba(197, 154, 74, 0.8));
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Floating WhatsApp Radar Wave Rings */
+
+
+
+@keyframes radarRing {
+
+
+
+  0% {
+
+
+
+    transform: scale(0.95);
+
+
+
+    opacity: 0.85;
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: scale(1.85);
+
+
+
+    opacity: 0;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+@keyframes radarRingDelayed {
+
+
+
+  0% {
+
+
+
+    transform: scale(0.95);
+
+
+
+    opacity: 0.65;
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: scale(2.1);
+
+
+
+    opacity: 0;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* WhatsApp Gentle Floating Bob */
+
+
+
+@keyframes waFloatingBob {
+
+
+
+  0%,
+  100% {
+
+
+
+    transform: translateY(0);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: translateY(-5px);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Badge Breathing Glow */
+
+
+
+@keyframes badgeGlowPulse {
+
+
+
+  0%,
+  100% {
+
+
+
+    box-shadow: 0 0 0 0 rgba(138, 90, 43, 0.3);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    box-shadow: 0 0 0 6px rgba(138, 90, 43, 0);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+@keyframes badgeGoldPulse {
+
+
+
+  0%,
+  100% {
+
+
+
+    box-shadow: 0 0 0 0 rgba(197, 154, 74, 0.35);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    box-shadow: 0 0 0 6px rgba(197, 154, 74, 0);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Modal Spring Bounce Entrance */
+
+
+
+@keyframes modalSpringIn {
+
+
+
+  0% {
+
+
+
+    opacity: 0;
+
+
+
+    transform: scale(0.93) translateY(18px);
+
+
+
+  }
+
+
+
+  70% {
+
+
+
+    opacity: 1;
+
+
+
+    transform: scale(1.01) translateY(-2px);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    opacity: 1;
+
+
+
+    transform: scale(1) translateY(0);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Backdrop Fade In */
+
+
+
+@keyframes backdropFadeIn {
+
+
+
+  from {
+
+
+
+    opacity: 0;
+
+
+
+    backdrop-filter: blur(0px);
+
+
+
+  }
+
+
+
+  to {
+
+
+
+    opacity: 1;
+
+
+
+    backdrop-filter: blur(8px);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Punchy Selection Bounce for Dry Fruit Fillers */
+
+
+
+@keyframes itemSelectPop {
+
+
+
+  0% {
+
+
+
+    transform: scale(0.94);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: scale(1.06);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: scale(1);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Animated Checkmark Pop */
+
+
+
+@keyframes checkPop {
+
+
+
+  0% {
+
+
+
+    transform: scale(0) rotate(-45deg);
+
+
+
+    opacity: 0;
+
+
+
+  }
+
+
+
+  70% {
+
+
+
+    transform: scale(1.3) rotate(8deg);
+
+
+
+    opacity: 1;
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: scale(1) rotate(0deg);
+
+
+
+    opacity: 1;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Subtle Star Rating Twinkle */
+
+
+
+@keyframes starTwinkle {
+
+
+
+  0%,
+  100% {
+
+
+
+    transform: scale(1);
+
+
+
+  }
+
+
+
+  50% {
+
+
+
+    transform: scale(1.15);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Trust Bar Icon Bounce on Hover */
+
+
+
+@keyframes iconBounce {
+
+
+
+  0%,
+  100% {
+
+
+
+    transform: translateY(0);
+
+
+
+  }
+
+
+
+  40% {
+
+
+
+    transform: translateY(-5px) scale(1.1);
+
+
+
+  }
+
+
+
+  70% {
+
+
+
+    transform: translateY(1px);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Announcement Bar Marquee */
+
+
+
+@keyframes marqueeScroll {
+
+
+
+  0% {
+
+
+
+    transform: translateX(0);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    transform: translateX(-50%);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* Toast Notification Entrance */
+
+
+
+@keyframes toastSlideIn {
+
+
+
+  0% {
+
+
+
+    opacity: 0;
+
+
+
+    transform: translateY(24px) scale(0.94);
+
+
+
+  }
+
+
+
+  70% {
+
+
+
+    transform: translateY(-4px) scale(1.02);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    opacity: 1;
+
+
+
+    transform: translateY(0) scale(1);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+/* 2. COMPONENT ANIMATION CLASSES */
+
+
+
+
+
+
+
+/* --- HERO SECTION ANIMATIONS --- */
+
+
+
+.hero-backdrop-glow {
+
+
+
+  animation: heroGlowPulse 7s ease-in-out infinite alternate !important;
+
+
+
+  pointer-events: none;
+
+
+
+}
+
+
+
+
+
+
+
+.hero-floating-badge.badge-top-right {
+
+
+
+  animation: floatBadgeTop 4.2s ease-in-out infinite !important;
+
+
+
+  will-change: transform;
+
+
+
+}
+
+
+
+
+
+
+
+.hero-floating-badge.badge-bottom-left {
+
+
+
+  animation: floatBadgeBottom 4.8s ease-in-out infinite 0.7s !important;
+
+
+
+  will-change: transform;
+
+
+
+}
+
+
+
+
+
+
+
+.hero-floating-badge {
+
+
+
+  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.hero-floating-badge:hover {
+
+
+
+  transform: translateY(-12px) scale(1.03) !important;
+
+
+
+  box-shadow: 0 16px 32px rgba(0, 0, 0, 0.14) !important;
+
+
+
+}
+
+
+
+
+
+
+
+/* Hero Badge Micro-Sparkle */
+
+
+
+.hero-badge {
+
+
+
+  position: relative;
+
+
+
+  overflow: hidden;
+
+
+
+  transition: all 0.3s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.hero-badge:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+  box-shadow: 0 4px 14px rgba(197, 154, 74, 0.18);
+
+
+
+}
+
+
+
+
+
+
+
+.hero-badge-icon {
+
+
+
+  animation: sparkleTwinkle 3s ease-in-out infinite;
+
+
+
+}
+
+
+
+
+
+
+
+/* Shimmer Button Effect */
+
+
+
+.btn-primary.hero-btn,
+
+
+
+.btn-secondary.hero-btn,
+
+
+
+.builder-add-btn,
+
+
+
+.quick-order-btn {
+
+
+
+  position: relative;
+
+
+
+  overflow: hidden;
+
+
+
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.btn-primary.hero-btn::after,
+
+
+
+.builder-add-btn::after {
+
+
+
+  content: '';
+
+
+
+  position: absolute;
+
+
+
+  top: 0;
+
+
+
+  left: 0;
+
+
+
+  width: 40%;
+
+
+
+  height: 100%;
+
+
+
+  background: linear-gradient(90deg,
+
+
+
+      rgba(255, 255, 255, 0) 0%,
+
+
+
+      rgba(255, 255, 255, 0.28) 50%,
+
+
+
+      rgba(255, 255, 255, 0) 100%);
+
+
+
+  transform: translateX(-150%) skewX(-20deg);
+
+
+
+  pointer-events: none;
+
+
+
+  animation: buttonShimmer 4.5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+
+
+}
+
+
+
+
+
+
+
+.btn-primary.hero-btn:hover,
+
+
+
+.btn-secondary.hero-btn:hover {
+
+
+
+  transform: translateY(-3px) scale(1.02);
+
+
+
+  box-shadow: 0 10px 24px rgba(138, 90, 43, 0.25);
+
+
+
+}
+
+
+
+
+
+
+
+.btn-primary.hero-btn:active,
+
+
+
+.btn-secondary.hero-btn:active {
+
+
+
+  transform: translateY(0px) scale(0.98);
+
+
+
+}
+
+
+
+
+
+
+
+/* Popular Category Chips */
+
+
+
+.category-chip {
+
+
+
+  transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.category-chip:hover {
+
+
+
+  transform: translateY(-2.5px) scale(1.03);
+
+
+
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.08);
+
+
+
+  border-color: var(--color-primary);
+
+
+
+}
+
+
+
+
+
+
+
+.category-chip:active {
+
+
+
+  transform: scale(0.96);
+
+
+
+}
+
+
+
+
+
+
+
+/* Trust Bar Feature Cards */
+
+
+
+.trust-card {
+
+
+
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, background 0.28s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.trust-card:hover {
+
+
+
+  transform: translateY(-5px);
+
+
+
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.07);
+
+
+
+}
+
+
+
+
+
+
+
+.trust-card:hover .trust-icon-box {
+
+
+
+  animation: iconBounce 0.6s ease;
+
+
+
+  background: #8A5A2B;
+
+
+
+  color: #FFFFFF;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- PRODUCT CARD ANIMATIONS --- */
+
+
+
+.clean-product-card {
+
+
+
+  transition: transform 0.32s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.32s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease !important;
+
+
+
+  will-change: transform, box-shadow;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-product-card:hover {
+
+
+
+  transform: translateY(-7px) !important;
+
+
+
+  box-shadow: 0 18px 36px -6px rgba(45, 37, 33, 0.09), 0 8px 16px -4px rgba(138, 90, 43, 0.08) !important;
+
+
+
+  border-color: #E5D7C3 !important;
+
+
+
+}
+
+
+
+
+
+
+
+/* Product Image Zoom on Hover */
+
+
+
+.product-image-container {
+
+
+
+  overflow: hidden;
+
+
+
+  position: relative;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-product-img {
+
+
+
+  transition: transform 0.5s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+
+
+  will-change: transform;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-product-card:hover .clean-product-img {
+
+
+
+  transform: scale(1.07) !important;
+
+
+
+}
+
+
+
+
+
+
+
+/* Quick View Slide Up Button */
+
+
+
+.image-hover-action {
+
+
+
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-product-card:hover .clean-quick-view-btn {
+
+
+
+  transform: translateY(0);
+
+
+
+}
+
+
+
+
+
+
+
+.clean-quick-view-btn {
+
+
+
+  transition: background-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-quick-view-btn:hover {
+
+
+
+  background: var(--color-primary-dark) !important;
+
+
+
+  transform: scale(1.04);
+
+
+
+  box-shadow: 0 4px 12px rgba(138, 90, 43, 0.35);
+
+
+
+}
+
+
+
+
+
+
+
+/* Weight Option Pills */
+
+
+
+.clean-weight-pill {
+
+
+
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-weight-pill:hover {
+
+
+
+  transform: translateY(-1.5px);
+
+
+
+  border-color: var(--color-primary);
+
+
+
+}
+
+
+
+
+
+
+
+.clean-weight-pill.active {
+
+
+
+  animation: itemSelectPop 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+
+
+
+  font-weight: 600;
+
+
+
+}
+
+
+
+
+
+
+
+/* Card Action Button */
+
+
+
+.card-details-btn {
+
+
+
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+
+
+}
+
+
+
+
+
+
+
+.card-details-btn:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+  box-shadow: 0 6px 16px rgba(138, 90, 43, 0.2);
+
+
+
+}
+
+
+
+
+
+
+
+/* Badges Breathing Animation */
+
+
+
+.clean-badge.badge-bestseller {
+
+
+
+  animation: badgeGoldPulse 3.5s ease-in-out infinite;
+
+
+
+}
+
+
+
+
+
+
+
+.clean-badge.badge-bucket {
+
+
+
+  animation: badgeGlowPulse 3.5s ease-in-out infinite;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- FLOATING WHATSAPP BUTTON WITH RADAR RIPPLES --- */
+
+
+
+.floating-whatsapp-btn {
+  display: none !important;
+}
+
+
+
+
+
+
+
+/* Ripple Waves Behind Button */
+
+
+
+.whatsapp-radar-ring-1,
+
+
+
+.whatsapp-radar-ring-2 {
+
+
+
+  position: absolute;
+
+
+
+  top: 0;
+
+
+
+  left: 0;
+
+
+
+  width: 100%;
+
+
+
+  height: 100%;
+
+
+
+  border-radius: inherit;
+
+
+
+  background-color: #8A5A2B;
+
+
+
+  pointer-events: none;
+
+
+
+  z-index: -1;
+
+
+
+}
+
+
+
+
+
+
+
+.whatsapp-radar-ring-1 {
+
+
+
+  animation: radarRing 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) infinite;
+
+
+
+}
+
+
+
+
+
+
+
+.whatsapp-radar-ring-2 {
+
+
+
+  animation: radarRingDelayed 2.6s cubic-bezier(0.25, 0.8, 0.25, 1) infinite 1.2s;
+
+
+
+}
+
+
+
+
+
+
+
+/* WhatsApp Tooltip Pill on Hover */
+
+
+
+.whatsapp-hover-tooltip {
+
+
+
+  position: absolute;
+
+
+
+  right: 68px;
+
+
+
+  background: rgba(45, 37, 33, 0.94);
+
+
+
+  backdrop-filter: blur(8px);
+
+
+
+  color: #ffffff;
+
+
+
+  padding: 8px 14px;
+
+
+
+  border-radius: 20px;
+
+
+
+  font-size: 13px;
+
+
+
+  font-weight: 600;
+
+
+
+  white-space: nowrap;
+
+
+
+  pointer-events: none;
+
+
+
+  opacity: 0;
+
+
+
+  transform: translateX(12px) scale(0.95);
+
+
+
+  transition: opacity 0.24s ease, transform 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+
+
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+
+
+
+  display: flex;
+
+
+
+  align-items: center;
+
+
+
+  gap: 6px;
+
+
+
+}
+
+
+
+
+
+
+
+.floating-whatsapp-btn:hover .whatsapp-hover-tooltip {
+
+
+
+  opacity: 1;
+
+
+
+  transform: translateX(0) scale(1);
+
+
+
+}
+
+
+
+
+
+
+
+/* --- CUSTOM DRY FRUIT BUCKET BUILDER MODAL ANIMATIONS --- */
+
+
+
+.modal-backdrop {
+
+
+
+  animation: backdropFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+
+
+}
+
+
+
+
+
+
+
+.bucket-builder-modal,
+
+
+
+.product-details-modal {
+
+
+
+  animation: modalSpringIn 0.38s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+
+
+
+}
+
+
+
+
+
+
+
+/* Step Tab Active Transitions */
+
+
+
+.step-tab {
+
+
+
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+
+
+
+}
+
+
+
+
+
+
+
+.step-tab:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+}
+
+
+
+
+
+
+
+.step-tab.active .step-circle {
+
+
+
+  animation: itemSelectPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+
+
+}
+
+
+
+
+
+
+
+/* Filler & Container Selection Cards */
+
+
+
+.container-option-card,
+
+
+
+.filler-card {
+
+
+
+  transition: transform 0.24s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.24s ease, box-shadow 0.24s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.container-option-card:hover,
+
+
+
+.filler-card:hover {
+
+
+
+  transform: translateY(-4px) scale(1.02);
+
+
+
+  box-shadow: 0 10px 22px rgba(0, 0, 0, 0.08);
+
+
+
+}
+
+
+
+
+
+
+
+.container-option-card.active,
+
+
+
+.filler-card.active {
+
+
+
+  animation: itemSelectPop 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+
+
+
+}
+
+
+
+
+
+
+
+.filler-checkbox-circle.checked {
+
+
+
+  animation: checkPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+
+
+
+}
+
+
+
+
+
+
+
+/* Interactive Confetti Button */
+
+
+
+.builder-add-btn:active {
+
+
+
+  transform: scale(0.97);
+
+
+
+}
+
+
+
+
+
+
+
+/* --- HEALTH BENEFITS & TESTIMONIALS ANIMATIONS --- */
+
+
+
+.benefit-card,
+
+
+
+.testimonial-card,
+
+
+
+.faq-accordion-item {
+
+
+
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.benefit-card:hover,
+
+
+
+.testimonial-card:hover {
+
+
+
+  transform: translateY(-6px);
+
+
+
+  box-shadow: 0 14px 28px rgba(0, 0, 0, 0.08);
+
+
+
+  border-color: #E5D7C3;
+
+
+
+}
+
+
+
+
+
+
+
+.testimonial-stars svg {
+
+
+
+  transition: transform 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.testimonial-card:hover .testimonial-stars svg {
+
+
+
+  animation: starTwinkle 0.8s ease;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- TOAST NOTIFICATIONS ANIMATION --- */
+
+
+
+.toast-item {
+
+
+
+  animation: toastSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards !important;
+
+
+
+  box-shadow: 0 12px 28px -4px rgba(0, 0, 0, 0.18) !important;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- SCROLL REVEAL SYSTEM (Lightweight Intersection Observer) --- */
+
+
+
+.reveal-on-scroll {
+
+
+
+  opacity: 0;
+
+
+
+  transform: translateY(28px);
+
+
+
+  transition: opacity 0.65s cubic-bezier(0.16, 1, 0.3, 1), transform 0.65s cubic-bezier(0.16, 1, 0.3, 1);
+
+
+
+  will-change: opacity, transform;
+
+
+
+}
+
+
+
+
+
+
+
+.reveal-on-scroll.is-revealed {
+
+
+
+  opacity: 1;
+
+
+
+  transform: translateY(0);
+
+
+
+}
+
+
+
+
+
+
+
+/* Scroll Reveal Variants */
+
+
+
+.reveal-on-scroll.reveal-from-left {
+
+
+
+  transform: translateX(-40px);
+
+
+
+}
+
+
+
+.reveal-on-scroll.reveal-from-left.is-revealed {
+
+
+
+  transform: translateX(0);
+
+
+
+}
+
+
+
+
+
+
+
+.reveal-on-scroll.reveal-from-right {
+
+
+
+  transform: translateX(40px);
+
+
+
+}
+
+
+
+.reveal-on-scroll.reveal-from-right.is-revealed {
+
+
+
+  transform: translateX(0);
+
+
+
+}
+
+
+
+
+
+
+
+.reveal-on-scroll.reveal-scale {
+
+
+
+  transform: scale(0.92);
+
+
+
+}
+
+
+
+.reveal-on-scroll.reveal-scale.is-revealed {
+
+
+
+  transform: scale(1);
+
+
+
+}
+
+
+
+
+
+
+
+/* Staggered Delay Utilities for Grid Items */
+
+
+
+.stagger-1 {
+  transition-delay: 0.05s;
+}
+
+
+
+.stagger-2 {
+  transition-delay: 0.12s;
+}
+
+
+
+.stagger-3 {
+  transition-delay: 0.19s;
+}
+
+
+
+.stagger-4 {
+  transition-delay: 0.26s;
+}
+
+
+
+.stagger-5 {
+  transition-delay: 0.33s;
+}
+
+
+
+.stagger-6 {
+  transition-delay: 0.40s;
+}
+
+
+
+.stagger-7 {
+  transition-delay: 0.47s;
+}
+
+
+
+.stagger-8 {
+  transition-delay: 0.54s;
+}
+
+
+
+
+
+
+
+/* --- NAVBAR ENTRANCE ANIMATION --- */
+
+
+
+@keyframes navSlideDown {
+
+
+
+  0% {
+
+
+
+    opacity: 0;
+
+
+
+    transform: translateY(-100%);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    opacity: 1;
+
+
+
+    transform: translateY(0);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+.site-header {
+
+
+
+  animation: navSlideDown 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+
+
+}
+
+
+
+
+
+
+
+/* Announcement Bar Slide Down */
+
+
+
+@keyframes announcementSlideDown {
+
+
+
+  0% {
+
+
+
+    opacity: 0;
+
+
+
+    transform: translateY(-100%);
+
+
+
+  }
+
+
+
+  100% {
+
+
+
+    opacity: 1;
+
+
+
+    transform: translateY(0);
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+.announcement-bar {
+
+
+
+  animation: announcementSlideDown 0.45s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- CONTACT FORM INPUT FOCUS ANIMATIONS --- */
+
+
+
+.form-input:focus,
+
+
+
+.form-select:focus,
+
+
+
+.form-textarea:focus {
+
+
+
+  transition: border-color 0.25s ease, box-shadow 0.25s ease, transform 0.2s ease;
+
+
+
+  transform: translateY(-1px);
+
+
+
+}
+
+
+
+
+
+
+
+/* Submit Button Micro-Interaction */
+
+
+
+.landing-submit-btn {
+
+
+
+  position: relative;
+
+
+
+  overflow: hidden;
+
+
+
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background-color 0.25s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.landing-submit-btn:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+  box-shadow: 0 8px 20px rgba(138, 90, 43, 0.3);
+
+
+
+}
+
+
+
+
+
+
+
+.landing-submit-btn:active {
+
+
+
+  transform: translateY(0) scale(0.98);
+
+
+
+}
+
+
+
+
+
+
+
+.landing-submit-btn::after {
+
+
+
+  content: '';
+
+
+
+  position: absolute;
+
+
+
+  top: 0;
+
+
+
+  left: 0;
+
+
+
+  width: 40%;
+
+
+
+  height: 100%;
+
+
+
+  background: linear-gradient(90deg,
+
+
+
+      rgba(255, 255, 255, 0) 0%,
+
+
+
+      rgba(255, 255, 255, 0.22) 50%,
+
+
+
+      rgba(255, 255, 255, 0) 100%);
+
+
+
+  transform: translateX(-150%) skewX(-20deg);
+
+
+
+  pointer-events: none;
+
+
+
+  animation: buttonShimmer 5s cubic-bezier(0.4, 0, 0.2, 1) infinite;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- CONTACT CHANNEL HOVER ANIMATIONS --- */
+
+
+
+.contact-channel-item {
+
+
+
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.25s ease, background 0.25s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.contact-channel-item:hover {
+
+
+
+  transform: translateY(-3px);
+
+
+
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.06);
+
+
+
+}
+
+
+
+
+
+
+
+.contact-channel-item:hover .channel-icon-box {
+
+
+
+  animation: iconBounce 0.5s ease;
+
+
+
+}
+
+
+
+
+
+
+
+/* Perk Box Hover */
+
+
+
+.perk-box {
+
+
+
+  transition: transform 0.2s ease, background 0.2s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.perk-box:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+}
+
+
+
+
+
+
+
+/* --- FAQ ACCORDION SMOOTH TRANSITIONS --- */
+
+
+
+.faq-card {
+
+
+
+  transition: transform 0.28s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.28s ease, border-color 0.28s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.faq-card:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+
+
+
+}
+
+
+
+
+
+
+
+.faq-card.open {
+
+
+
+  border-color: #E5D7C3;
+
+
+
+}
+
+
+
+
+
+
+
+@keyframes faqSlideDown {
+
+
+
+  from {
+
+
+
+    opacity: 0;
+
+
+
+    transform: translateY(-8px);
+
+
+
+    max-height: 0;
+
+
+
+  }
+
+
+
+  to {
+
+
+
+    opacity: 1;
+
+
+
+    transform: translateY(0);
+
+
+
+    max-height: 200px;
+
+
+
+  }
+
+
+
+}
+
+
+
+
+
+
+
+.faq-answer-panel {
+
+
+
+  animation: faqSlideDown 0.3s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+
+
+
+}
+
+
+
+
+
+
+
+/* --- FOOTER STRIP ITEM HOVER --- */
+
+
+
+.strip-item {
+
+
+
+  transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), background 0.25s ease;
+
+
+
+}
+
+
+
+
+
+
+
+.strip-item:hover {
+
+
+
+  transform: translateY(-2px);
+
+
+
+}
+
+
+
+
+
+
+
+/* Footer Links Hover Animation */
+
+
+
+.footer-link-btn {
+
+
+
+  transition: color 0.2s ease, transform 0.2s ease, padding-left 0.2s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.footer-link-btn:hover {
+
+
+
+  transform: translateX(4px);
+
+
+
+  color: var(--color-primary, #8A5A2B);
+
+
+
+}
+
+
+
+
+
+
+
+/* Newsletter Button Animation */
+
+
+
+.newsletter-btn {
+
+
+
+  transition: background 0.25s ease, transform 0.25s ease, box-shadow 0.25s ease !important;
+
+
+
+}
+
+
+
+
+
+
+
+.newsletter-btn:hover {
+
+
+
+  transform: scale(1.08);
+
+
+
+  box-shadow: 0 4px 12px rgba(138, 90, 43, 0.3);
+
+
+
+}
+
+
+
+
+
+
+
+/* --- REDUCED MOTION ACCESSIBILITY --- */
+
+
+
+@media (prefers-reduced-motion: reduce) {
+
+
+
+  *,
+
+
+
+  *::before,
+
+
+
+  *::after {
+
+
+
+    animation-duration: 0.01ms !important;
+
+
+
+    animation-iteration-count: 1 !important;
+
+
+
+    transition-duration: 0.01ms !important;
+
+
+
+  }
+
+
+
+
+
+
+
+  .reveal-on-scroll {
+
+
+
+    opacity: 1;
+
+
+
+    transform: none;
+
+
+
+  }
+
+
+
+}

@@ -91,6 +91,28 @@ exports.createProduct = async (req, res) => {
       });
     }
 
+    // Process up to 5 images for gallery and primary image
+    let galleryArray = [];
+    if (Array.isArray(gallery)) {
+      galleryArray = gallery
+        .filter((img) => typeof img === "string" && img.trim())
+        .map((img) => img.trim());
+    } else if (typeof gallery === "string" && gallery.trim()) {
+      galleryArray = [gallery.trim()];
+    }
+
+    const primaryImage =
+      (typeof image === "string" && image.trim()) ||
+      galleryArray[0] ||
+      "";
+
+    if (primaryImage && !galleryArray.includes(primaryImage)) {
+      galleryArray.unshift(primaryImage);
+    }
+
+    // Limit to maximum 5 images
+    galleryArray = galleryArray.slice(0, 5);
+
     const product = await Product.create({
       name: name.trim(),
       brand: brand?.trim() || "GOLDEN HARVEST",
@@ -103,8 +125,8 @@ exports.createProduct = async (req, res) => {
         reviewsCount !== undefined ? Number(reviewsCount) : 0,
       shortDesc: shortDesc?.trim() || "",
       description: description?.trim() || "",
-      image: image?.trim() || "",
-      gallery: Array.isArray(gallery) ? gallery : [],
+      image: primaryImage,
+      gallery: galleryArray,
       basePrice: Number(basePrice),
       weightOptions: Array.isArray(weightOptions)
         ? weightOptions
@@ -184,6 +206,34 @@ exports.updateProduct = async (req, res) => {
 
     if (updateData.sortOrder !== undefined) {
       updateData.sortOrder = Number(updateData.sortOrder);
+    }
+
+    // Process up to 5 images for gallery and primary image
+    if (updateData.gallery !== undefined) {
+      if (Array.isArray(updateData.gallery)) {
+        updateData.gallery = updateData.gallery
+          .filter((img) => typeof img === "string" && img.trim())
+          .map((img) => img.trim())
+          .slice(0, 5);
+      } else if (typeof updateData.gallery === "string" && updateData.gallery.trim()) {
+        updateData.gallery = [updateData.gallery.trim()];
+      } else {
+        updateData.gallery = [];
+      }
+    }
+
+    if (updateData.image !== undefined) {
+      updateData.image = typeof updateData.image === "string" ? updateData.image.trim() : "";
+      if (updateData.image && (!updateData.gallery || updateData.gallery.length === 0)) {
+        updateData.gallery = [updateData.image];
+      } else if (updateData.image && updateData.gallery && !updateData.gallery.includes(updateData.image)) {
+        updateData.gallery.unshift(updateData.image);
+        if (updateData.gallery.length > 5) {
+          updateData.gallery = updateData.gallery.slice(0, 5);
+        }
+      }
+    } else if (updateData.gallery && updateData.gallery.length > 0) {
+      updateData.image = updateData.gallery[0];
     }
 
     const product = await Product.findByIdAndUpdate(

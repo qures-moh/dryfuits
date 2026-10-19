@@ -34,11 +34,14 @@ const Products = () => {
 
   // View Product Modal state
   const [productToView, setProductToView] = useState(null);
+  const [viewSelectedImg, setViewSelectedImg] = useState("");
 
   // Edit Product Modal state
   const [productToEdit, setProductToEdit] = useState(null);
   const [isSavingEdit, setIsSavingEdit] = useState(false);
   const [uploadingEditImg, setUploadingEditImg] = useState(false);
+  const [editImages, setEditImages] = useState([]);
+  const [editFilePickerKey, setEditFilePickerKey] = useState(0);
   const [editForm, setEditForm] = useState({
     name: "",
     brand: "GOLDEN HARVEST",
@@ -142,6 +145,7 @@ const Products = () => {
 
   // View modal handler
   const handleOpenViewModal = (product) => {
+    setViewSelectedImg(product.image || product.gallery?.[0] || "");
     setProductToView(product);
   };
 
@@ -150,6 +154,15 @@ const Products = () => {
     const w1 = product.weightOptions?.find((w) => w.weight === "500g")?.price;
     const w2 = product.weightOptions?.find((w) => w.weight === "750g")?.price;
     const w3 = product.weightOptions?.find((w) => w.weight === "1kg")?.price;
+
+    const initialGallery =
+      Array.isArray(product.gallery) && product.gallery.length > 0
+        ? product.gallery
+        : product.image
+        ? [product.image]
+        : ["/images/almonds.jpg"];
+
+    setEditImages(initialGallery.slice(0, 5));
 
     setEditForm({
       name: product.name || "",
@@ -163,7 +176,7 @@ const Products = () => {
       reviewsCount: product.reviewsCount !== undefined ? product.reviewsCount : 20,
       shortDesc: product.shortDesc || "",
       description: product.description || "",
-      image: product.image || "/images/almonds.jpg",
+      image: initialGallery[0] || product.image || "/images/almonds.jpg",
       origin: product.origin || "",
       storage: product.storage || "Airtight container in cool dry place",
       weightOption1Price: w1 !== undefined ? w1 : product.basePrice || "",
@@ -182,31 +195,93 @@ const Products = () => {
   };
 
   const handleEditImageUpload = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const fileList = Array.from(e.target.files || []);
+    if (!fileList.length) return;
 
-    if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size exceeds 5MB limit");
+    const remaining = 5 - editImages.length;
+    if (remaining <= 0) {
+      toast.error("Maximum 5 images allowed. Please remove an image first.");
+      e.target.value = "";
       return;
     }
 
-    const uploadData = new FormData();
-    uploadData.append("image", file);
+    if (fileList.length > remaining) {
+      toast(`Adding first ${remaining} image(s). Maximum 5 images allowed.`, {
+        icon: "ℹ️",
+      });
+    }
+
+    const filesToUpload = fileList.slice(0, remaining);
+
+    for (const file of filesToUpload) {
+      if (file.size > 5 * 1024 * 1024) {
+        toast.error(`"${file.name}" exceeds 5MB limit`);
+        e.target.value = "";
+        return;
+      }
+    }
 
     try {
       setUploadingEditImg(true);
-      const res = await api.post("/upload", uploadData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
-      if (res.data && res.data.filePath) {
-        setEditForm((prev) => ({ ...prev, image: res.data.filePath }));
-        toast.success("Image uploaded successfully!");
+      let newUrls = [];
+
+      // Try batch upload if multiple files
+      if (filesToUpload.length > 1) {
+        try {
+          const multiData = new FormData();
+          filesToUpload.forEach((f) => multiData.append("images", f));
+          const res = await api.post("/upload/multiple", multiData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          const urls = res.data?.imageUrls || res.data?.filePaths || res.data?.urls;
+          if (Array.isArray(urls) && urls.length > 0) {
+            newUrls = urls;
+          }
+        } catch (err) {
+          console.warn("Multi upload fallback in edit:", err);
+        }
+      }
+
+      if (!newUrls.length) {
+        for (const file of filesToUpload) {
+          const singleData = new FormData();
+          singleData.append("image", file);
+          const res = await api.post("/upload", singleData, {
+            headers: { "Content-Type": "multipart/form-data" },
+          });
+          const url = res.data?.imageUrl || res.data?.filePath || res.data?.url;
+          if (url) newUrls.push(url);
+        }
+      }
+
+      if (newUrls.length > 0) {
+        const next = [...editImages, ...newUrls].slice(0, 5);
+        setEditImages(next);
+        setEditForm((prev) => ({ ...prev, image: next[0] || "" }));
+        toast.success(`${newUrls.length} image(s) uploaded successfully!`);
       }
     } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to upload image");
+      toast.error(err.response?.data?.message || "Failed to upload image(s)");
     } finally {
       setUploadingEditImg(false);
+      setEditFilePickerKey((k) => k + 1);
     }
+  };
+
+  const handleRemoveEditImage = (indexToRemove) => {
+    const next = editImages.filter((_, idx) => idx !== indexToRemove);
+    setEditImages(next);
+    setEditForm((prev) => ({ ...prev, image: next[0] || "" }));
+  };
+
+  const handleSetPrimaryEditImage = (indexToPrimary) => {
+    if (indexToPrimary === 0) return;
+    const target = editImages[indexToPrimary];
+    const rest = editImages.filter((_, idx) => idx !== indexToPrimary);
+    const next = [target, ...rest];
+    setEditImages(next);
+    setEditForm((prev) => ({ ...prev, image: next[0] || "" }));
+    toast.success("Main cover image updated!");
   };
 
   const handleSaveEdit = async (e) => {
@@ -223,6 +298,16 @@ const Products = () => {
     }
     if (editForm.basePrice === "" || Number(editForm.basePrice) < 0) {
       toast.error("Valid base price is required");
+      return;
+    }
+
+    const finalImages =
+      editImages.length > 0
+        ? editImages.slice(0, 5)
+        : [editForm.image.trim()].filter(Boolean);
+
+    if (finalImages.length === 0) {
+      toast.error("At least 1 product image is required (up to 5 images)");
       return;
     }
 
@@ -260,7 +345,8 @@ const Products = () => {
         reviewsCount: Number(editForm.reviewsCount),
         shortDesc: editForm.shortDesc.trim(),
         description: editForm.description.trim(),
-        image: editForm.image.trim(),
+        image: finalImages[0] || "",
+        gallery: finalImages,
         origin: editForm.origin.trim(),
         storage: editForm.storage.trim(),
         weightOptions,
@@ -1023,9 +1109,9 @@ const Products = () => {
                   }}
                 >
                   <img
-                    src={formatProductImage(productToView.image)}
+                    src={formatProductImage(viewSelectedImg || productToView.image)}
                     alt={productToView.name}
-                    onError={(e) => handleImageError(e, productToView.image)}
+                    onError={(e) => handleImageError(e, viewSelectedImg || productToView.image)}
                     style={{ width: "100%", height: "100%", objectFit: "cover" }}
                   />
                   <span
@@ -1045,6 +1131,40 @@ const Products = () => {
                     {productToView.inStock ? "In Stock" : "Out of Stock"}
                   </span>
                 </div>
+
+                {/* Gallery Thumbnails in View Modal */}
+                {Array.isArray(productToView.gallery) && productToView.gallery.length > 1 && (
+                  <div style={{ display: "flex", gap: "6px", marginTop: "10px", flexWrap: "wrap", maxWidth: "170px" }}>
+                    {productToView.gallery.slice(0, 5).map((gImg, idx) => {
+                      const isActive = (viewSelectedImg || productToView.image) === gImg;
+                      return (
+                        <button
+                          key={idx}
+                          type="button"
+                          onClick={() => setViewSelectedImg(gImg)}
+                          title={`View image ${idx + 1}`}
+                          style={{
+                            width: "36px",
+                            height: "36px",
+                            borderRadius: "6px",
+                            overflow: "hidden",
+                            border: isActive ? "2px solid #2563eb" : "1px solid #cbd5e1",
+                            padding: 0,
+                            cursor: "pointer",
+                            background: "#fff",
+                          }}
+                        >
+                          <img
+                            src={formatProductImage(gImg)}
+                            alt={`Thumb ${idx + 1}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => handleImageError(e, gImg)}
+                          />
+                        </button>
+                      );
+                    })}
+                  </div>
+                )}
               </div>
 
               <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
@@ -1358,45 +1478,205 @@ const Products = () => {
                   </div>
                 </div>
 
-                {/* Image URL & Multer Upload */}
-                <div style={{ gridColumn: "1 / -1" }}>
-                  <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#334155" }}>
-                    Product Image (Path / URL or Upload)
-                  </label>
-                  <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-                    <input
-                      type="text"
-                      name="image"
-                      value={editForm.image}
-                      onChange={handleEditChange}
-                      placeholder="/images/almonds.jpg"
-                      style={{ flex: 1, padding: "10px 14px", borderRadius: "8px", border: "1px solid #cbd5e1", fontSize: "13.5px" }}
-                    />
+                {/* Multi-Image Gallery (Up to 5 Images) */}
+                <div style={{ gridColumn: "1 / -1", background: "#f8fafc", padding: "16px", borderRadius: "10px", border: "1px dashed #cbd5e1" }}>
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "12px", flexWrap: "wrap", gap: "8px" }}>
+                    <label style={{ fontSize: "13.5px", fontWeight: "700", color: "#0f172a", display: "flex", alignItems: "center", gap: "6px", margin: 0 }}>
+                      <Upload size={16} />
+                      Product Images * (Up to 5 Images)
+                    </label>
+                    <span
+                      style={{
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: editImages.length > 0 ? "#1e40af" : "#64748b",
+                        background: editImages.length > 0 ? "#dbeafe" : "#e2e8f0",
+                        padding: "2px 8px",
+                        borderRadius: "12px",
+                      }}
+                    >
+                      {editImages.length} / 5 Images
+                    </span>
+                  </div>
+
+                  {/* Thumbnail Row */}
+                  <div style={{ display: "flex", gap: "10px", flexWrap: "wrap", marginBottom: "12px", alignItems: "center" }}>
+                    {editImages.map((imgUrl, idx) => {
+                      const isCover = idx === 0;
+                      return (
+                        <div
+                          key={`${imgUrl}-${idx}`}
+                          style={{
+                            position: "relative",
+                            width: "95px",
+                            height: "95px",
+                            borderRadius: "8px",
+                            overflow: "hidden",
+                            border: isCover ? "2px solid #2563eb" : "1.5px solid #cbd5e1",
+                            background: "#ffffff",
+                            boxShadow: "0 1px 4px rgba(0,0,0,0.06)",
+                            flexShrink: 0,
+                          }}
+                        >
+                          <img
+                            src={formatProductImage(imgUrl)}
+                            alt={`Preview ${idx + 1}`}
+                            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                            onError={(e) => handleImageError(e, imgUrl)}
+                          />
+
+                          {/* Badge */}
+                          <div
+                            style={{
+                              position: "absolute",
+                              top: "4px",
+                              left: "4px",
+                              background: isCover ? "rgba(30, 41, 59, 0.9)" : "rgba(0, 0, 0, 0.65)",
+                              color: isCover ? "#facc15" : "#ffffff",
+                              fontSize: "10px",
+                              fontWeight: "700",
+                              padding: "2px 5px",
+                              borderRadius: "4px",
+                              display: "flex",
+                              alignItems: "center",
+                              gap: "2px",
+                              lineHeight: 1.1,
+                            }}
+                          >
+                            {isCover && <Star size={9} fill="#facc15" color="#facc15" />}
+                            {isCover ? "Cover" : `#${idx + 1}`}
+                          </div>
+
+                          {/* Actions */}
+                          <div style={{ position: "absolute", top: "4px", right: "4px", display: "flex", gap: "3px" }}>
+                            {!isCover && (
+                              <button
+                                type="button"
+                                onClick={() => handleSetPrimaryEditImage(idx)}
+                                title="Set as Main Cover Image"
+                                style={{
+                                  background: "rgba(255, 255, 255, 0.95)",
+                                  color: "#ca8a04",
+                                  border: "none",
+                                  borderRadius: "50%",
+                                  width: "20px",
+                                  height: "20px",
+                                  display: "flex",
+                                  alignItems: "center",
+                                  justifyContent: "center",
+                                  cursor: "pointer",
+                                  boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                                }}
+                              >
+                                <Star size={11} fill="#ca8a04" color="#ca8a04" />
+                              </button>
+                            )}
+
+                            <button
+                              type="button"
+                              onClick={() => handleRemoveEditImage(idx)}
+                              title="Remove image"
+                              style={{
+                                background: "rgba(220, 38, 38, 0.88)",
+                                color: "#ffffff",
+                                border: "none",
+                                borderRadius: "50%",
+                                width: "20px",
+                                height: "20px",
+                                display: "flex",
+                                alignItems: "center",
+                                justifyContent: "center",
+                                cursor: "pointer",
+                                boxShadow: "0 1px 3px rgba(0,0,0,0.2)",
+                              }}
+                            >
+                              <X size={12} />
+                            </button>
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    {/* Add More Tile */}
+                    {editImages.length < 5 && (
+                      <label
+                        style={{
+                          width: "95px",
+                          height: "95px",
+                          borderRadius: "8px",
+                          border: "2px dashed #94a3b8",
+                          background: "#f1f5f9",
+                          display: "flex",
+                          flexDirection: "column",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          gap: "4px",
+                          cursor: uploadingEditImg ? "not-allowed" : "pointer",
+                          color: "#475569",
+                          fontSize: "11px",
+                          fontWeight: "600",
+                          flexShrink: 0,
+                          transition: "all 0.2s ease",
+                        }}
+                      >
+                        {uploadingEditImg ? (
+                          <>
+                            <Loader2 size={16} className="animate-spin" color="#2563eb" />
+                            <span style={{ fontSize: "10px" }}>Uploading...</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus size={18} color="#2563eb" />
+                            <span>Add Image</span>
+                            <span style={{ fontSize: "9.5px", color: "#64748b" }}>
+                              ({5 - editImages.length} left)
+                            </span>
+                          </>
+                        )}
+                        <input
+                          key={`file-picker-${editFilePickerKey}`}
+                          type="file"
+                          multiple
+                          accept="image/*"
+                          disabled={uploadingEditImg || editImages.length >= 5}
+                          onChange={handleEditImageUpload}
+                          style={{ display: "none" }}
+                        />
+                      </label>
+                    )}
+                  </div>
+
+                  <div style={{ display: "flex", alignItems: "center", gap: "10px", flexWrap: "wrap" }}>
                     <label
                       style={{
-                        background: "#f1f5f9",
-                        border: "1px solid #cbd5e1",
-                        padding: "9px 14px",
-                        borderRadius: "8px",
-                        fontSize: "13px",
+                        background: editImages.length >= 5 ? "#94a3b8" : "#172554",
+                        color: "#ffffff",
+                        padding: "8px 14px",
+                        borderRadius: "7px",
+                        fontSize: "12.5px",
                         fontWeight: "600",
-                        color: "#475569",
-                        cursor: "pointer",
+                        cursor: editImages.length >= 5 || uploadingEditImg ? "not-allowed" : "pointer",
                         display: "inline-flex",
                         alignItems: "center",
                         gap: "6px",
-                        whiteSpace: "nowrap",
                       }}
                     >
-                      {uploadingEditImg ? <Loader2 size={15} className="animate-spin" /> : <Upload size={15} />}
-                      {uploadingEditImg ? "Uploading..." : "Upload New"}
+                      {uploadingEditImg ? <Loader2 size={14} className="animate-spin" /> : <Upload size={14} />}
+                      {uploadingEditImg ? "Uploading..." : "Upload Images (Up to 5)"}
                       <input
+                        key={`file-picker-btn-${editFilePickerKey}`}
                         type="file"
+                        multiple
                         accept="image/*"
+                        disabled={uploadingEditImg || editImages.length >= 5}
                         onChange={handleEditImageUpload}
                         style={{ display: "none" }}
                       />
                     </label>
+
+                    <span style={{ fontSize: "11.5px", color: "#64748b" }}>
+                      Max 5MB each. First image is the main store cover.
+                    </span>
                   </div>
                 </div>
 

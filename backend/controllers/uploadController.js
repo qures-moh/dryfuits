@@ -72,22 +72,32 @@ const upload = multer({
 
 exports.uploadSingle = upload.single('image');
 
-exports.uploadMultiple = upload.array('images', 10);
+exports.uploadMultiple = (req, res, next) => {
+  upload.any()(req, res, (err) => {
+    if (err) {
+      return res.status(400).json({ message: err.message });
+    }
+    next();
+  });
+};
 
 exports.uploadImage = (req, res) => {
   try {
-    if (!req.file) {
+    const file = req.file || (req.files && req.files[0]);
+    if (!file) {
       return res.status(400).json({
         message: 'No file uploaded'
       });
     }
 
-    const imageUrl = `/uploads/${req.file.filename}`;
+    const imageUrl = `/uploads/${file.filename}`;
 
     return res.status(201).json({
       message: 'File uploaded successfully',
       imageUrl,
-      filename: req.file.filename
+      filePath: imageUrl,
+      url: imageUrl,
+      filename: file.filename
     });
   } catch (error) {
     console.error('Upload error:', error);
@@ -100,19 +110,24 @@ exports.uploadImage = (req, res) => {
 
 exports.uploadMultipleImages = (req, res) => {
   try {
-    if (!req.files || req.files.length === 0) {
+    const files = req.files || (req.file ? [req.file] : []);
+
+    if (!files || files.length === 0) {
       return res.status(400).json({
         message: 'No files uploaded'
       });
     }
 
-    const imageUrls = req.files.map(
+    const imageUrls = files.map(
       (file) => `/uploads/${file.filename}`
     );
 
     return res.status(201).json({
       message: 'Files uploaded successfully',
-      imageUrls
+      imageUrls,
+      filePaths: imageUrls,
+      urls: imageUrls,
+      count: imageUrls.length
     });
   } catch (error) {
     console.error('Upload error:', error);

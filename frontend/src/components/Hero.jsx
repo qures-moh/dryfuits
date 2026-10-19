@@ -147,8 +147,7 @@ export const Hero = ({
                 fetchPriority="high"
                 onError={(event) => {
                   event.currentTarget.onerror = null;
-                  event.currentTarget.src =
-                    '/images/hero.jpg';
+                  event.currentTarget.src = '/images/hero.jpg';
                 }}
               />
             </div>
@@ -164,7 +163,7 @@ export const Hero = ({
               <span>
                 <strong>
                   {settings?.heroFloatingBadge1Title ||
-                    'Premium Gifting'}
+                    'Gifts with Meaning'}
                 </strong>
 
                 <small>
@@ -190,7 +189,7 @@ export const Hero = ({
 
                 <small>
                   {settings?.heroFloatingBadge2Subtitle ||
-                    'Carefully selected dry fruits'}
+                    'A little goodness, every day'}
                 </small>
               </span>
             </div>

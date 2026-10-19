@@ -18,7 +18,7 @@ import { Testimonials } from './components/Testimonials';
 import { ContactSection } from './components/ContactSection';
 import { Footer } from './components/Footer';
 import { ToastContainer } from './components/Toast';
-import { WhatsAppButton } from './components/WhatsAppButton';
+import { BackToTop } from './components/BackToTop';
 
 function HomePage() {
   const navigate = useNavigate();
@@ -77,16 +77,11 @@ function HomePage() {
     });
   }, []);
 
-  const handleSelectCategory = useCallback(
-    (categoryId) => {
-      setIsBucketBuilderOpen(false);
-      setSelectedCategory(categoryId || 'all');
-      setActiveTab('collection');
-
-      scrollToSection('collection-section');
-    },
-    [scrollToSection]
-  );
+  const handleSelectCategory = useCallback((categoryId) => {
+    setIsBucketBuilderOpen(false);
+    setSelectedCategory(categoryId || 'all');
+    setActiveTab('collection');
+  }, []);
 
   const handleExploreShop = useCallback(() => {
     setIsBucketBuilderOpen(false);
@@ -113,16 +108,32 @@ function HomePage() {
         contact: 'contact-section',
       };
 
+      // if (tabId === 'home') {
+      //   navigate('/', { replace: false });
+
+      //   requestAnimationFrame(() => {
+      //     window.scrollTo({
+      //       top: 0,
+      //       behavior: 'auto',
+      //     });
+      //   });
+
+      //   return;
+      // }
       if (tabId === 'home') {
-        navigate('/');
+  navigate('/', { replace: false });
 
-        window.scrollTo({
-          top: 0,
-          behavior: 'smooth',
-        });
+  requestAnimationFrame(() => {
+    requestAnimationFrame(() => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'auto',
+      });
+    });
+  });
 
-        return;
-      }
+  return;
+}
 
       if (tabId === 'collection') {
         setSelectedCategory('all');
@@ -132,10 +143,17 @@ function HomePage() {
 
       if (sectionId) {
         navigate('/');
-        setTimeout(() => scrollToSection(sectionId), 0);
+
+        requestAnimationFrame(() => {
+          scrollToSection(sectionId);
+        });
       }
     },
-    [navigate, openBucketBuilder, scrollToSection]
+    [
+      navigate,
+      openBucketBuilder,
+      scrollToSection,
+    ]
   );
 
   return (
@@ -174,7 +192,9 @@ function HomePage() {
               searchQuery={searchQuery}
               setSearchQuery={setSearchQuery}
               onQuickView={(product) => {
-                const prodId = product?.id || product?._id;
+                const prodId =
+                  product?.id || product?._id;
+
                 if (prodId) {
                   navigate(`/product/${prodId}`);
                 }
@@ -183,7 +203,9 @@ function HomePage() {
             />
 
             <HealthBenefits />
+
             <Testimonials />
+
             <ContactSection />
           </main>
 
@@ -194,7 +216,7 @@ function HomePage() {
         </>
       )}
 
-      <WhatsAppButton />
+      <BackToTop />
     </div>
   );
 }
@@ -202,13 +224,15 @@ function HomePage() {
 function ProductPage() {
   const navigate = useNavigate();
   const { productId } = useParams();
-  const { getProduct, loading: siteLoading } = useSiteData();
+  const { getProduct, loading: siteLoading } =
+    useSiteData();
 
   const [product, setProduct] = useState(null);
   const [isFetching, setIsFetching] = useState(true);
 
   useEffect(() => {
     let isCurrent = true;
+
     setIsFetching(true);
 
     if (productId) {
@@ -246,21 +270,44 @@ function ProductPage() {
           setActiveTab={() => navigate('/')}
           searchQuery=""
           setSearchQuery={() => {}}
-          onOpenBucketBuilder={() => navigate('/')}
-          onSelectCategory={() => navigate('/')}
+          onOpenBucketBuilder={() =>
+            navigate('/')
+          }
+          onSelectCategory={() =>
+            navigate('/')
+          }
           onNavigate={() => navigate('/')}
         />
+
         <main className="main-content">
-          <div className="clean-empty-state" style={{ minHeight: '60vh', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+          <div
+            className="clean-empty-state"
+            style={{
+              minHeight: '60vh',
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
             <div className="spinner-border text-gold inline-block mb-3" />
-            <p>Loading product details...</p>
+
+            <p>
+              Loading product details...
+            </p>
           </div>
         </main>
+
         <Footer
-          onSelectCategory={() => navigate('/')}
-          onOpenBucketBuilder={() => navigate('/')}
+          onSelectCategory={() =>
+            navigate('/')
+          }
+          onOpenBucketBuilder={() =>
+            navigate('/')
+          }
         />
-        <WhatsAppButton />
+
+        <BackToTop />
       </div>
     );
   }
@@ -273,15 +320,23 @@ function ProductPage() {
           setActiveTab={() => navigate('/')}
           searchQuery=""
           setSearchQuery={() => {}}
-          onOpenBucketBuilder={() => navigate('/')}
-          onSelectCategory={() => navigate('/')}
+          onOpenBucketBuilder={() =>
+            navigate('/')
+          }
+          onSelectCategory={() =>
+            navigate('/')
+          }
           onNavigate={() => navigate('/')}
         />
 
         <main className="main-content">
           <div className="clean-empty-state">
             <h2>Product not found</h2>
-            <p>The product you're looking for doesn't exist.</p>
+
+            <p>
+              The product you're looking for doesn't exist.
+            </p>
+
             <button
               type="button"
               className="clean-reset-btn"
@@ -293,11 +348,15 @@ function ProductPage() {
         </main>
 
         <Footer
-          onSelectCategory={() => navigate('/')}
-          onOpenBucketBuilder={() => navigate('/')}
+          onSelectCategory={() =>
+            navigate('/')
+          }
+          onOpenBucketBuilder={() =>
+            navigate('/')
+          }
         />
 
-        <WhatsAppButton />
+        <BackToTop />
       </div>
     );
   }
@@ -311,8 +370,12 @@ function ProductPage() {
         setActiveTab={() => navigate('/')}
         searchQuery=""
         setSearchQuery={() => {}}
-        onOpenBucketBuilder={() => navigate('/')}
-        onSelectCategory={() => navigate('/')}
+        onOpenBucketBuilder={() =>
+          navigate('/')
+        }
+        onSelectCategory={() =>
+          navigate('/')
+        }
         onNavigate={() => navigate('/')}
       />
 
@@ -324,11 +387,15 @@ function ProductPage() {
       </main>
 
       <Footer
-        onSelectCategory={() => navigate('/')}
-        onOpenBucketBuilder={() => navigate('/')}
+        onSelectCategory={() =>
+          navigate('/')
+        }
+        onOpenBucketBuilder={() =>
+          navigate('/')
+        }
       />
 
-      <WhatsAppButton />
+      <BackToTop />
     </div>
   );
 }
@@ -338,8 +405,15 @@ export function App() {
     <SiteDataProvider>
       <BrowserRouter>
         <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/product/:productId" element={<ProductPage />} />
+          <Route
+            path="/"
+            element={<HomePage />}
+          />
+
+          <Route
+            path="/product/:productId"
+            element={<ProductPage />}
+          />
         </Routes>
       </BrowserRouter>
     </SiteDataProvider>

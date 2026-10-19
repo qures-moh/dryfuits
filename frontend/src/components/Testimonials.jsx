@@ -63,7 +63,8 @@ export const Testimonials = () => {
               >
                 <div className="testimonial-rating-row">
                   <div
-                    className="stars-row"
+                    className="stars-row testimonial-stars"
+                    style={{ display: 'flex', flexDirection: 'row', alignItems: 'center', gap: '3px' }}
                     aria-label={`${starsCount} out of 5 stars`}
                   >
                     {[...Array(starsCount)].map((_, index) => (
@@ -72,6 +73,7 @@ export const Testimonials = () => {
                         size={15}
                         fill="#f59e0b"
                         color="#f59e0b"
+                        style={{ display: 'inline-block', flexShrink: 0 }}
                       />
                     ))}
                   </div>
