@@ -7,10 +7,41 @@ import {
   PhoneCall,
   ShieldCheck,
   Star,
-  Truck,
 } from "lucide-react";
 import { useStore } from "../redux/useStore";
 import { useSiteData } from "../context/SiteDataContext";
+
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL ||
+  "https://dryfuits-backend.onrender.com";
+
+const getProductImageUrl = (image) => {
+  if (!image) {
+    return "/images/bucket_hamper.jpg";
+  }
+
+  if (image.startsWith("http://") || image.startsWith("https://")) {
+    return image;
+  }
+
+  if (image.startsWith("/uploads/")) {
+    return `${BACKEND_URL}${image}`;
+  }
+
+  if (image.startsWith("uploads/")) {
+    return `${BACKEND_URL}/${image}`;
+  }
+
+  if (image.startsWith("/images/")) {
+    return image;
+  }
+
+  if (image.startsWith("images/")) {
+    return `/${image}`;
+  }
+
+  return image;
+};
 
 export const ProductDetailsModal = ({ product, onClose }) => {
   const { settings } = useSiteData();
@@ -21,10 +52,12 @@ export const ProductDetailsModal = ({ product, onClose }) => {
 
   if (!product) return null;
 
-  const galleryImages =
+  const rawGalleryImages =
     product.gallery?.length > 0
       ? product.gallery
       : [product.image].filter(Boolean);
+
+  const galleryImages = rawGalleryImages.map(getProductImageUrl);
 
   const weightOptions = product.weightOptions || [];
 
@@ -94,9 +127,16 @@ export const ProductDetailsModal = ({ product, onClose }) => {
           <section className="details-gallery">
             <div className="details-main-image-wrap">
               <img
-                src={galleryImages[selectedImgIndex] || product.image}
+                src={
+                  galleryImages[selectedImgIndex] ||
+                  getProductImageUrl(product.image)
+                }
                 alt={product.name}
                 className="details-main-img"
+                onError={(event) => {
+                  event.currentTarget.src =
+                    "/images/bucket_hamper.jpg";
+                }}
               />
 
               {product.badge && (
@@ -122,6 +162,10 @@ export const ProductDetailsModal = ({ product, onClose }) => {
                     <img
                       src={image}
                       alt={`${product.name} image ${index + 1}`}
+                      onError={(event) => {
+                        event.currentTarget.src =
+                          "/images/bucket_hamper.jpg";
+                      }}
                     />
                   </button>
                 ))}
@@ -132,10 +176,16 @@ export const ProductDetailsModal = ({ product, onClose }) => {
           <section className="details-content">
             <div className="details-header-row">
               <span className="details-category-tag">
-                {(product.category || "Golden Harvest").toUpperCase()}
+                {(
+                  typeof product.category === "object"
+                    ? product.category?.name
+                    : product.category || "Golden Harvest"
+                ).toUpperCase()}
               </span>
 
-              <h1 className="details-title">{product.name}</h1>
+              <h1 className="details-title">
+                {product.name}
+              </h1>
             </div>
 
             <div className="details-rating-bar">
@@ -150,7 +200,9 @@ export const ProductDetailsModal = ({ product, onClose }) => {
                         key={star}
                         size={15}
                         fill={
-                          star <= Math.round(rating) ? "#f59e0b" : "none"
+                          star <= Math.round(rating)
+                            ? "#f59e0b"
+                            : "none"
                         }
                         color="#f59e0b"
                       />
@@ -177,7 +229,9 @@ export const ProductDetailsModal = ({ product, onClose }) => {
 
             <div className="product-trust-summary">
               <ShieldCheck size={17} />
-              <span>Premium selection · Thoughtful gifting</span>
+              <span>
+                Premium selection · Thoughtful gifting
+              </span>
             </div>
 
             <div className="details-price-container">
@@ -186,7 +240,8 @@ export const ProductDetailsModal = ({ product, onClose }) => {
               </div>
 
               <span className="tax-inclusive-tag">
-                All taxes included · Shipping details confirmed on enquiry
+                All taxes included · Shipping details confirmed on
+                enquiry
               </span>
             </div>
 
@@ -198,20 +253,30 @@ export const ProductDetailsModal = ({ product, onClose }) => {
               {weightOptions.map((option, index) => (
                 <button
                   type="button"
-                  key={option.weight}
+                  key={`${option.weight}-${index}`}
                   className={`weight-choice-card ${
-                    selectedWeightIndex === index ? "selected" : ""
+                    selectedWeightIndex === index
+                      ? "selected"
+                      : ""
                   }`}
-                  onClick={() => setSelectedWeightIndex(index)}
-                  aria-pressed={selectedWeightIndex === index}
+                  onClick={() =>
+                    setSelectedWeightIndex(index)
+                  }
+                  aria-pressed={
+                    selectedWeightIndex === index
+                  }
                 >
-                  <span className="opt-weight">{option.weight}</span>
+                  <span className="opt-weight">
+                    {option.weight}
+                  </span>
 
                   <span className="opt-price">
                     {formatPrice(option.price)}
                   </span>
 
-                  <span className="opt-serves">{option.serves}</span>
+                  <span className="opt-serves">
+                    {option.serves}
+                  </span>
                 </button>
               ))}
             </div>

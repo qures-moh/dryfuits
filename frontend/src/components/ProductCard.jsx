@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useStore } from '../redux/useStore';
@@ -7,6 +6,38 @@ import {
   Gift,
   ArrowUpRight,
 } from 'lucide-react';
+
+const BACKEND_URL =
+  import.meta.env.VITE_BACKEND_URL ||
+  'https://dryfuits-backend.onrender.com';
+
+const getProductImageUrl = (image) => {
+  if (!image) {
+    return '/images/bucket_hamper.jpg';
+  }
+
+  if (image.startsWith('http://') || image.startsWith('https://')) {
+    return image;
+  }
+
+  if (image.startsWith('/uploads/')) {
+    return `${BACKEND_URL}${image}`;
+  }
+
+  if (image.startsWith('uploads/')) {
+    return `${BACKEND_URL}/${image}`;
+  }
+
+  if (image.startsWith('/images/')) {
+    return image;
+  }
+
+  if (image.startsWith('images/')) {
+    return `/${image}`;
+  }
+
+  return image;
+};
 
 export const ProductCard = ({ product }) => {
   const { formatPrice } = useStore();
@@ -26,8 +57,11 @@ export const ProductCard = ({ product }) => {
 
   const prodId = product.id || product._id;
 
+  const productImage = getProductImageUrl(product.image);
+
   const openProductPage = () => {
     navigate(`/product/${prodId}`);
+
     window.scrollTo({
       top: 0,
       behavior: 'auto',
@@ -56,10 +90,13 @@ export const ProductCard = ({ product }) => {
     >
       <div className="product-image-container">
         <img
-          src={product.image}
+          src={productImage}
           alt={product.name}
           className="clean-product-img"
           loading="lazy"
+          onError={(event) => {
+            event.currentTarget.src = '/images/bucket_hamper.jpg';
+          }}
         />
 
         <div className="card-top-badges">
@@ -110,7 +147,11 @@ export const ProductCard = ({ product }) => {
           <span className="price-prefix">From</span>
 
           <span className="clean-price-val">
-            {formatPrice(currentWeightOption ? currentWeightOption.price : product.basePrice)}
+            {formatPrice(
+              currentWeightOption
+                ? currentWeightOption.price
+                : product.basePrice
+            )}
           </span>
 
           {currentWeightOption?.weight && (
