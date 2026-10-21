@@ -283,89 +283,204 @@ const Products = () => {
     setEditForm((prev) => ({ ...prev, image: next[0] || "" }));
     toast.success("Main cover image updated!");
   };
-
   const handleSaveEdit = async (e) => {
-    e.preventDefault();
-    if (!productToEdit) return;
+  e.preventDefault();
 
-    if (!editForm.name.trim()) {
-      toast.error("Product name is required");
-      return;
-    }
-    if (!editForm.category.trim()) {
-      toast.error("Category is required");
-      return;
-    }
-    if (editForm.basePrice === "" || Number(editForm.basePrice) < 0) {
-      toast.error("Valid base price is required");
-      return;
-    }
+  if (!productToEdit) return;
 
-    const finalImages =
-      editImages.length > 0
-        ? editImages.slice(0, 5)
-        : [editForm.image.trim()].filter(Boolean);
+  if (!editForm.name.trim()) {
+    toast.error("Product name is required");
+    return;
+  }
 
-    if (finalImages.length === 0) {
-      toast.error("At least 1 product image is required (up to 5 images)");
-      return;
-    }
+  if (!editForm.category.trim()) {
+    toast.error("Category is required");
+    return;
+  }
 
-    try {
-      setIsSavingEdit(true);
+  if (editForm.basePrice === "" || Number(editForm.basePrice) < 0) {
+    toast.error("Valid base price is required");
+    return;
+  }
 
-      const baseP = Number(editForm.basePrice);
-      const weightOptions = [
-        {
-          weight: "500g",
-          price: Number(editForm.weightOption1Price) || baseP,
-          inStock: Boolean(editForm.inStock),
-        },
-        {
-          weight: "750g",
-          price: Number(editForm.weightOption2Price) || Math.round(baseP * 1.45),
-          inStock: Boolean(editForm.inStock),
-        },
-        {
-          weight: "1kg",
-          price: Number(editForm.weightOption3Price) || Math.round(baseP * 1.9),
-          inStock: Boolean(editForm.inStock),
-        },
-      ];
+  const finalImages =
+    editImages.length > 0
+      ? editImages.slice(0, 5)
+      : [editForm.image.trim()].filter(Boolean);
 
-      const payload = {
-        name: editForm.name.trim(),
-        brand: editForm.brand.trim(),
-        category: editForm.category.trim(),
-        basePrice: baseP,
-        badge: editForm.badge.trim(),
-        inStock: Boolean(editForm.inStock),
-        isBucket: Boolean(editForm.isBucket),
-        rating: Number(editForm.rating),
-        reviewsCount: Number(editForm.reviewsCount),
-        shortDesc: editForm.shortDesc.trim(),
-        description: editForm.description.trim(),
-        image: finalImages[0] || "",
-        gallery: finalImages,
-        origin: editForm.origin.trim(),
-        storage: editForm.storage.trim(),
-        weightOptions,
-      };
+  if (finalImages.length === 0) {
+    toast.error("At least 1 product image is required");
+    return;
+  }
 
-      const res = await api.put(`/products/${productToEdit._id}`, payload);
-      const updatedProduct = res.data;
+  try {
+    setIsSavingEdit(true);
 
-      setProducts((prev) =>
-        prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
-      );
-      toast.success(`"${updatedProduct.name}" updated successfully!`);
-      setProductToEdit(null);
-    } catch (err) {
-      toast.error(err.response?.data?.message || "Failed to update product");
-    } finally {
-      setIsSavingEdit(false);
-    }
-  };
+    const baseP = Number(editForm.basePrice);
+
+    const weightOptions = [
+      {
+        label: "500gm Pack",
+        weight: "500gm",
+        price:
+          editForm.weightOption1Price !== ""
+            ? Number(editForm.weightOption1Price)
+            : baseP,
+        serves: "Regular Pack",
+      },
+      {
+        label: "750gm Pack",
+        weight: "750gm",
+        price:
+          editForm.weightOption2Price !== ""
+            ? Number(editForm.weightOption2Price)
+            : Math.round(baseP * 1.45),
+        serves: "Family Pack",
+      },
+      {
+        label: "1kg Mega Pack",
+        weight: "1kg",
+        price:
+          editForm.weightOption3Price !== ""
+            ? Number(editForm.weightOption3Price)
+            : Math.round(baseP * 1.9),
+        serves: "Bulk Saver",
+      },
+    ];
+
+    const payload = {
+      name: editForm.name.trim(),
+      brand: editForm.brand.trim(),
+      category: editForm.category.trim(),
+      basePrice: baseP,
+      badge: editForm.badge.trim(),
+      inStock: Boolean(editForm.inStock),
+      isBucket: Boolean(editForm.isBucket),
+      rating: Number(editForm.rating),
+      reviewsCount: Number(editForm.reviewsCount),
+      shortDesc: editForm.shortDesc.trim(),
+      description: editForm.description.trim(),
+      image: finalImages[0] || "",
+      gallery: finalImages,
+      origin: editForm.origin.trim(),
+      storage: editForm.storage.trim(),
+      weightOptions,
+    };
+
+    const res = await api.put(
+      `/products/${productToEdit._id}`,
+      payload
+    );
+
+    const updatedProduct = res.data;
+
+    setProducts((prev) =>
+      prev.map((p) =>
+        p._id === updatedProduct._id
+          ? updatedProduct
+          : p
+      )
+    );
+
+    toast.success(
+      `"${updatedProduct.name}" updated successfully!`
+    );
+
+    setProductToEdit(null);
+  } catch (err) {
+    console.error("UPDATE PRODUCT ERROR:", err);
+
+    toast.error(
+      err.response?.data?.message ||
+        "Failed to update product"
+    );
+  } finally {
+    setIsSavingEdit(false);
+  }
+};
+
+  // const handleSaveEdit = async (e) => {
+  //   e.preventDefault();
+  //   if (!productToEdit) return;
+
+  //   if (!editForm.name.trim()) {
+  //     toast.error("Product name is required");
+  //     return;
+  //   }
+  //   if (!editForm.category.trim()) {
+  //     toast.error("Category is required");
+  //     return;
+  //   }
+  //   if (editForm.basePrice === "" || Number(editForm.basePrice) < 0) {
+  //     toast.error("Valid base price is required");
+  //     return;
+  //   }
+
+  //   const finalImages =
+  //     editImages.length > 0
+  //       ? editImages.slice(0, 5)
+  //       : [editForm.image.trim()].filter(Boolean);
+
+  //   if (finalImages.length === 0) {
+  //     toast.error("At least 1 product image is required (up to 5 images)");
+  //     return;
+  //   }
+
+  //   try {
+  //     setIsSavingEdit(true);
+
+  //     const baseP = Number(editForm.basePrice);
+  //     const weightOptions = [
+  //       {
+  //         weight: "500g",
+  //         price: Number(editForm.weightOption1Price) || baseP,
+  //         inStock: Boolean(editForm.inStock),
+  //       },
+  //       {
+  //         weight: "750g",
+  //         price: Number(editForm.weightOption2Price) || Math.round(baseP * 1.45),
+  //         inStock: Boolean(editForm.inStock),
+  //       },
+  //       {
+  //         weight: "1kg",
+  //         price: Number(editForm.weightOption3Price) || Math.round(baseP * 1.9),
+  //         inStock: Boolean(editForm.inStock),
+  //       },
+  //     ];
+
+  //     const payload = {
+  //       name: editForm.name.trim(),
+  //       brand: editForm.brand.trim(),
+  //       category: editForm.category.trim(),
+  //       basePrice: baseP,
+  //       badge: editForm.badge.trim(),
+  //       inStock: Boolean(editForm.inStock),
+  //       isBucket: Boolean(editForm.isBucket),
+  //       rating: Number(editForm.rating),
+  //       reviewsCount: Number(editForm.reviewsCount),
+  //       shortDesc: editForm.shortDesc.trim(),
+  //       description: editForm.description.trim(),
+  //       image: finalImages[0] || "",
+  //       gallery: finalImages,
+  //       origin: editForm.origin.trim(),
+  //       storage: editForm.storage.trim(),
+  //       weightOptions,
+  //     };
+
+  //     const res = await api.put(`/products/${productToEdit._id}`, payload);
+  //     const updatedProduct = res.data;
+
+  //     setProducts((prev) =>
+  //       prev.map((p) => (p._id === updatedProduct._id ? updatedProduct : p))
+  //     );
+  //     toast.success(`"${updatedProduct.name}" updated successfully!`);
+  //     setProductToEdit(null);
+  //   } catch (err) {
+  //     toast.error(err.response?.data?.message || "Failed to update product");
+  //   } finally {
+  //     setIsSavingEdit(false);
+  //   }
+  // };
 
 
   const filtered = products.filter((p) => {

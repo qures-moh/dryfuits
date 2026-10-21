@@ -79,8 +79,8 @@ export const ProductCard = ({ product }) => {
 
   return (
     <article
-      className={`clean-product-card ${
-        product.isBucket ? 'bucket-highlight-card' : ''
+      className={`gh-product-card ${
+        product.isBucket ? 'gh-product-card--bucket' : ''
       }`}
       onClick={openProductPage}
       onKeyDown={handleCardKeyDown}
@@ -88,40 +88,44 @@ export const ProductCard = ({ product }) => {
       role="link"
       aria-label={`View details for ${product.name}`}
     >
-      <div className="product-image-container">
+      <div className="gh-product-card__image-box">
         <img
           src={productImage}
           alt={product.name}
-          className="clean-product-img"
+          className="gh-product-card__image"
           loading="lazy"
           onError={(event) => {
             event.currentTarget.src = '/images/bucket_hamper.jpg';
           }}
         />
 
-        <div className="card-top-badges">
-          {product.badge && (
+        {product.badge && (
+          <div className="gh-product-card__badge-wrap">
             <span
-              className={`clean-badge ${
+              className={`gh-product-card__badge ${
                 product.badge === 'Sold out'
-                  ? 'badge-soldout'
+                  ? 'gh-product-card__badge--soldout'
                   : product.isBucket
-                    ? 'badge-bucket'
-                    : 'badge-bestseller'
+                    ? 'gh-product-card__badge--bucket'
+                    : 'gh-product-card__badge--best'
               }`}
             >
               {product.isBucket && (
-                <Gift size={12} className="mr-1" />
+                <Gift
+                  size={12}
+                  strokeWidth={2.2}
+                />
               )}
-              {product.badge}
-            </span>
-          )}
-        </div>
 
-        <div className="image-hover-action">
+              <span>{product.badge}</span>
+            </span>
+          </div>
+        )}
+
+        <div className="gh-product-card__quick-view">
           <button
             type="button"
-            className="clean-quick-view-btn"
+            className="gh-product-card__quick-btn"
             onClick={(event) => {
               event.stopPropagation();
               openProductPage();
@@ -134,19 +138,21 @@ export const ProductCard = ({ product }) => {
         </div>
       </div>
 
-      <div className="clean-product-info">
-        <span className="product-brand-tag">
+      <div className="gh-product-card__content">
+        <span className="gh-product-card__brand">
           {product.brand || 'GOLDEN HARVEST'}
         </span>
 
-        <h3 className="clean-product-title">
+        <h3 className="gh-product-card__title">
           {product.name}
         </h3>
 
-        <div className="clean-price-row">
-          <span className="price-prefix">From</span>
+        <div className="gh-product-card__price">
+          <span className="gh-product-card__from">
+            From
+          </span>
 
-          <span className="clean-price-val">
+          <span className="gh-product-card__amount">
             {formatPrice(
               currentWeightOption
                 ? currentWeightOption.price
@@ -155,20 +161,22 @@ export const ProductCard = ({ product }) => {
           </span>
 
           {currentWeightOption?.weight && (
-            <span className="clean-serves-tag">
+            <span className="gh-product-card__weight-label">
               ({currentWeightOption.weight})
             </span>
           )}
         </div>
 
         {weightOptions.length > 0 && (
-          <div className="clean-weight-pills">
+          <div className="gh-product-card__weights">
             {weightOptions.map((option, index) => (
               <button
                 key={`${option.weight}-${index}`}
                 type="button"
-                className={`clean-weight-pill ${
-                  safeIndex === index ? 'active' : ''
+                className={`gh-product-card__weight-btn ${
+                  safeIndex === index
+                    ? 'gh-product-card__weight-btn--active'
+                    : ''
                 }`}
                 onClick={(event) => {
                   event.stopPropagation();
@@ -182,10 +190,10 @@ export const ProductCard = ({ product }) => {
           </div>
         )}
 
-        <div className="landing-card-actions">
+        <div className="gh-product-card__footer">
           <button
             type="button"
-            className="card-details-btn"
+            className="gh-product-card__details-btn"
             onClick={(event) => {
               event.stopPropagation();
               openProductPage();
