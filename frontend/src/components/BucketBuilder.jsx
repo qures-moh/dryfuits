@@ -493,11 +493,74 @@ export const BucketBuilder = ({
         </nav>
 
         {loading && (
-          <div className="bucket-builder-loading">
-            <Sparkles size={22} />
-            <p>
-              Loading Custom Studio...
-            </p>
+          <div className="studio-loader-container">
+            {/* Branded Luxury Status Indicator */}
+            <div className="studio-loader-banner">
+              <div className="studio-loader-icon-wrapper">
+                <div className="studio-loader-spinner" />
+                <Sparkles size={18} className="studio-loader-sparkle" />
+              </div>
+              <div className="studio-loader-text">
+                <h3 className="studio-loader-heading">
+                  Curating Handcrafted Custom Studio
+                </h3>
+                <p className="studio-loader-subtext">
+                  Preparing artisanal containers, fresh dry fruits & bespoke gift packaging...
+                </p>
+              </div>
+            </div>
+
+            {/* Realistic Studio Skeleton UI matching Step 1 & Preview Pane */}
+            <div className="builder-content-grid studio-skeleton-grid" aria-hidden="true">
+              <main className="builder-step-pane">
+                <div className="step-section">
+                  <div className="step-title-row">
+                    <div style={{ flex: 1 }}>
+                      <div className="studio-skeleton-line studio-skeleton-title" />
+                      <div className="studio-skeleton-line studio-skeleton-subtext" />
+                    </div>
+                    <div className="studio-skeleton-pill" />
+                  </div>
+
+                  <div className="containers-grid">
+                    {[1, 2, 3, 4].map((item) => (
+                      <div key={item} className="studio-skeleton-card">
+                        <div className="studio-skeleton-img" />
+                        <div className="studio-skeleton-card-body">
+                          <div className="studio-skeleton-line studio-skeleton-card-title" />
+                          <div className="studio-skeleton-line studio-skeleton-card-meta" />
+                          <div className="studio-skeleton-bottom-row">
+                            <div className="studio-skeleton-price-pill" />
+                            <div className="studio-skeleton-btn-pill" />
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              </main>
+
+              <aside className="builder-preview-pane">
+                <div className="studio-skeleton-preview-box">
+                  <div className="studio-skeleton-preview-header">
+                    <div className="studio-skeleton-pill" style={{ width: "90px" }} />
+                    <div className="studio-skeleton-circle" />
+                  </div>
+                  <div className="studio-skeleton-preview-img" />
+                  <div className="studio-skeleton-preview-details">
+                    <div className="studio-skeleton-line" style={{ width: "65%", height: "18px" }} />
+                    <div className="studio-skeleton-line" style={{ width: "85%", height: "12px", marginTop: "8px" }} />
+                    <div className="studio-skeleton-divider" />
+                    <div className="studio-skeleton-line" style={{ width: "100%", height: "14px" }} />
+                    <div className="studio-skeleton-line" style={{ width: "100%", height: "14px", marginTop: "8px" }} />
+                    <div className="studio-skeleton-total-bar">
+                      <div className="studio-skeleton-line" style={{ width: "40%", height: "16px" }} />
+                      <div className="studio-skeleton-line" style={{ width: "30%", height: "20px" }} />
+                    </div>
+                  </div>
+                </div>
+              </aside>
+            </div>
           </div>
         )}
 

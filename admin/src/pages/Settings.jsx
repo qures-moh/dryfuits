@@ -6,7 +6,6 @@ import {
   CheckCircle,
   Upload,
   Image as ImageIcon,
-  RotateCcw,
   Loader2,
 } from "lucide-react";
 import toast from "react-hot-toast";
@@ -294,16 +293,6 @@ const Settings = () => {
     }
   };
 
-  const handleResetLogo = () => {
-    setSettings((prev) => ({
-      ...prev,
-      logoUrl: "/images/logo.svg",
-    }));
-
-    toast.success(
-      "Reset logo to default SVG logo. Remember to save settings."
-    );
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -633,27 +622,6 @@ const Settings = () => {
                   )}
                 </button>
 
-                <button
-                  type="button"
-                  onClick={handleResetLogo}
-                  style={{
-                    background: "#ffffff",
-                    color: "#475569",
-                    border: "1px solid #cbd5e1",
-                    padding: "8px 14px",
-                    borderRadius: "6px",
-                    fontSize: "13px",
-                    fontWeight: "600",
-                    cursor: "pointer",
-                    display: "inline-flex",
-                    alignItems: "center",
-                    gap: "6px",
-                  }}
-                  title="Reset to default logo"
-                >
-                  <RotateCcw size={14} />
-                  Reset to Default
-                </button>
               </div>
             </div>
           </div>

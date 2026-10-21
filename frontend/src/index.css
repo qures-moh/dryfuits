@@ -5634,6 +5634,291 @@ select {
   background: #E5D7C3;
 }
 
+/* ==========================================================================
+   Custom Studio Branded Loader & Skeleton UI
+   ========================================================================== */
+
+@keyframes studioLuxuryShimmer {
+  0% {
+    background-position: -200% 0;
+  }
+  100% {
+    background-position: 200% 0;
+  }
+}
+
+@keyframes studioSpin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes studioSparkleGlow {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 0.85;
+  }
+  50% {
+    transform: scale(1.18);
+    opacity: 1;
+  }
+}
+
+.studio-loader-container {
+  width: 100%;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.studio-loader-banner {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 20px 24px 8px;
+  padding: 16px 20px;
+  background: linear-gradient(135deg, #FFFDFB 0%, #FBF6EF 100%);
+  border: 1px solid #F0E7DA;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(138, 90, 43, 0.05);
+  position: relative;
+  overflow: hidden;
+}
+
+.studio-loader-banner::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 2.5px;
+  background: linear-gradient(90deg, #F0E7DA 0%, #D4AF37 50%, #8A5A2B 75%, #F0E7DA 100%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 2s linear infinite;
+}
+
+.studio-loader-icon-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  flex-shrink: 0;
+  background: #FFFFFF;
+  border-radius: 11px;
+  border: 1px solid #E5D7C3;
+  box-shadow: 0 2px 8px rgba(138, 90, 43, 0.06);
+}
+
+.studio-loader-spinner {
+  position: absolute;
+  inset: 4px;
+  border: 2.5px solid #F0E7DA;
+  border-top-color: #8A5A2B;
+  border-right-color: #D4AF37;
+  border-radius: 50%;
+  animation: studioSpin 1s cubic-bezier(0.55, 0.15, 0.45, 0.85) infinite;
+}
+
+.studio-loader-sparkle {
+  color: #8A5A2B;
+  animation: studioSparkleGlow 2s ease-in-out infinite;
+  z-index: 2;
+}
+
+.studio-loader-text {
+  min-width: 0;
+}
+
+.studio-loader-heading {
+  margin: 0;
+  color: #5A3A1E;
+  font-family: "Cormorant Garamond", Georgia, serif;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.studio-loader-subtext {
+  margin: 4px 0 0;
+  color: #8A5A2B;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+/* Skeleton Grid */
+.studio-skeleton-grid {
+  pointer-events: none;
+  user-select: none;
+}
+
+.studio-skeleton-line {
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+  border-radius: 6px;
+}
+
+.studio-skeleton-title {
+  height: 24px;
+  width: 220px;
+  margin-bottom: 8px;
+}
+
+.studio-skeleton-subtext {
+  height: 14px;
+  width: 320px;
+}
+
+.studio-skeleton-pill {
+  width: 80px;
+  height: 26px;
+  border-radius: 20px;
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+}
+
+.studio-skeleton-circle {
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+}
+
+.studio-skeleton-card {
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  background: #FFFFFF;
+  border: 1px solid #F0E7DA;
+  border-radius: 11px;
+}
+
+.studio-skeleton-img {
+  width: 100%;
+  height: 110px;
+  border-radius: 8px;
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+  margin-bottom: 12px;
+}
+
+.studio-skeleton-card-body {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.studio-skeleton-card-title {
+  height: 16px;
+  width: 75%;
+}
+
+.studio-skeleton-card-meta {
+  height: 12px;
+  width: 45%;
+}
+
+.studio-skeleton-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 6px;
+}
+
+.studio-skeleton-price-pill {
+  width: 60px;
+  height: 20px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+}
+
+.studio-skeleton-btn-pill {
+  width: 48px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+}
+
+/* Skeleton Preview Box */
+.studio-skeleton-preview-box {
+  background: #FBF8F5;
+  border: 1px solid #F0E7DA;
+  border-radius: 12px;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.studio-skeleton-preview-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.studio-skeleton-preview-img {
+  width: 100%;
+  height: 160px;
+  border-radius: 10px;
+  background: linear-gradient(90deg, #F5EFEB 25%, #EADBCC 50%, #F5EFEB 75%);
+  background-size: 200% 100%;
+  animation: studioLuxuryShimmer 1.8s ease-in-out infinite;
+}
+
+.studio-skeleton-preview-details {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.studio-skeleton-divider {
+  width: 100%;
+  height: 1px;
+  background: #E5D7C3;
+  margin: 6px 0;
+}
+
+.studio-skeleton-total-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-top: 10px;
+  border-top: 1px dashed #E5D7C3;
+  margin-top: 4px;
+}
+
+@media (max-width: 640px) {
+  .studio-loader-banner {
+    margin: 12px 14px 6px;
+    padding: 12px 14px;
+    gap: 12px;
+  }
+
+  .studio-loader-icon-wrapper {
+    width: 38px;
+    height: 38px;
+  }
+
+  .studio-loader-heading {
+    font-size: 16px;
+  }
+
+  .studio-loader-subtext {
+    font-size: 11.5px;
+  }
+}
+
 .builder-content-grid {
   display: grid;
   grid-template-columns: minmax(0, 1.55fr) minmax(260px, 0.8fr);

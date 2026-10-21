@@ -10,47 +10,19 @@ import {
   Settings,
   X,
   Gift,
+  BadgeCheck,
 } from "lucide-react";
 import api from "../api/axios";
 import { formatImageUrl } from "../utils/formatImage";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 
-const Sidebar = ({ isOpen, onClose }) => {
-  const [siteSettings, setSiteSettings] = useState({
-    brandName: "Golden Harvest",
-    brandTagline: "Admin Panel",
-    logoUrl: "/images/logo.svg",
-  });
+const Sidebar = ({ isOpen, isDesktopCollapsed, onClose }) => {
+  const { siteSettings } = useSiteSettings();
   const [imgError, setImgError] = useState(false);
 
   useEffect(() => {
-    let isMounted = true;
-    const fetchSiteSettings = async () => {
-      try {
-        const res = await api.get("/settings");
-        if (res.data && isMounted) {
-          setSiteSettings((prev) => ({ ...prev, ...res.data }));
-          setImgError(false);
-        }
-      } catch (e) {
-        // Fallback gracefully
-      }
-    };
-
-    fetchSiteSettings();
-
-    const handleUpdate = (e) => {
-      if (e.detail) {
-        setSiteSettings((prev) => ({ ...prev, ...e.detail }));
-        setImgError(false);
-      }
-    };
-
-    window.addEventListener("settingsUpdated", handleUpdate);
-    return () => {
-      isMounted = false;
-      window.removeEventListener("settingsUpdated", handleUpdate);
-    };
-  }, []);
+    setImgError(false);
+  }, [siteSettings?.logoUrl]);
 
   const menuItems = [
     {
@@ -72,6 +44,11 @@ const Sidebar = ({ isOpen, onClose }) => {
       label: "Categories",
       path: "/categories",
       icon: Tags,
+    },
+    {
+      label: "Badges",
+      path: "/badges",
+      icon: BadgeCheck,
     },
     {
       label: "Custom Studio",
@@ -107,7 +84,7 @@ const Sidebar = ({ isOpen, onClose }) => {
       <aside
         className={`admin-sidebar ${
           isOpen ? "sidebar-open" : ""
-        }`}
+        } ${isDesktopCollapsed ? "desktop-collapsed" : ""}`}
       >
         <div className="sidebar-brand">
           <div className="sidebar-logo">
@@ -116,22 +93,35 @@ const Sidebar = ({ isOpen, onClose }) => {
                 src={formatImageUrl(siteSettings.logoUrl)}
                 alt="Logo"
                 onError={() => setImgError(true)}
-                style={{ width: "100%", height: "100%", objectFit: "contain", padding: "3px" }}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "contain",
+                  padding: "3px",
+                }}
               />
             ) : (
-              siteSettings.brandName?.slice(0, 2).toUpperCase() || "GH"
+              siteSettings.brandName?.slice(0, 2).toUpperCase() ||
+              "GH"
             )}
           </div>
 
           <div className="sidebar-brand-text">
-            <strong>{siteSettings.brandName || "Golden Harvest"}</strong>
-            <span>{siteSettings.brandTagline || "Admin Panel"}</span>
+            <strong>
+              {siteSettings.brandName || "Golden Harvest"}
+            </strong>
+
+            <span>
+              {siteSettings.brandTagline || "Admin Panel"}
+            </span>
           </div>
 
           <button
             type="button"
             className="sidebar-close"
             onClick={onClose}
+            aria-label="Close sidebar"
+            title="Close sidebar"
           >
             <X size={18} />
           </button>
@@ -149,7 +139,11 @@ const Sidebar = ({ isOpen, onClose }) => {
               <NavLink
                 key={item.path}
                 to={item.path}
-                onClick={onClose}
+                onClick={() => {
+                  if (typeof window !== "undefined" && window.innerWidth <= 900 && onClose) {
+                    onClose();
+                  }
+                }}
                 className={({ isActive }) =>
                   `sidebar-link ${
                     isActive ? "active" : ""
@@ -157,7 +151,6 @@ const Sidebar = ({ isOpen, onClose }) => {
                 }
               >
                 <Icon size={18} strokeWidth={1.8} />
-
                 <span>{item.label}</span>
               </NavLink>
             );

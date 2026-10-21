@@ -87,9 +87,9 @@ const productSchema = new mongoose.Schema(
     },
 
     badge: {
-      type: String,
-      default: "",
-      trim: true,
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Badge",
+      default: null,
     },
 
     inStock: {

@@ -13,9 +13,11 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import { fetchDashboard } from "../redux/slices/dashboardSlice";
+import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const Dashboard = () => {
-  const dispatch = useDispatch();
+  const { siteSettings } = useSiteSettings();
+  const brandName = siteSettings?.brandName || "Golden Harvest";
 
   const {
     data: dashboardData,
@@ -84,7 +86,7 @@ const Dashboard = () => {
         <div>
           <h1 className="dashboard-title">Landing Page Content Manager</h1>
           <p className="dashboard-subtitle">
-            Overview of live dynamic components and content on Golden Harvest store
+            Overview of live dynamic components and content on {brandName} store
           </p>
         </div>
 

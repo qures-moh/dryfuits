@@ -14,8 +14,19 @@ const settingsRoutes = require("./routes/settings");
 const uploadRoutes = require("./routes/upload");
 const dashboardRoutes = require("./routes/dashboard");
 const customStudioRoutes = require("./routes/customStudio");
+const badgeRouter = require("./routes/badgeRoutes");
 
 const app = express();
+console.log("🔥 THIS IS MY DRY FRUIT SERVER");
+
+app.get("/api/test", (req, res) => {
+  console.log("TEST ROUTE HIT");
+
+  res.json({
+    success: true,
+    message: "Correct server.js is running",
+  });
+});
 
 if (!process.env.MONGODB_URI) {
   throw new Error("MONGODB_URI is missing");
@@ -39,18 +50,14 @@ const allowedOrigins = [
 app.use(
   cors({
     origin: (origin, callback) => {
-      if (
-        !origin ||
-        allowedOrigins.includes(origin) ||
-        /^https?:\/\/localhost(:\d+)?$/.test(origin) ||
-        /^https?:\/\/127\.0\.0\.1(:\d+)?$/.test(origin)
-      ) {
+      if (!origin || allowedOrigins.includes(origin)) {
         return callback(null, true);
       }
+
       return callback(null, true);
     },
     credentials: true,
-  }),
+  })
 );
 
 app.use(express.json({ limit: "10mb" }));
@@ -60,7 +67,7 @@ app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 
 app.use(
   "/images",
-  express.static(path.join(__dirname, "..", "public", "images")),
+  express.static(path.join(__dirname, "..", "public", "images"))
 );
 
 app.use("/api/auth", authRoutes);
@@ -72,10 +79,19 @@ app.use("/api/settings", settingsRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/dashboard", dashboardRoutes);
 app.use("/api/custom-studio", customStudioRoutes);
+app.use("/api/badges", badgeRouter);
+
 app.get("/api/health", (req, res) => {
   res.json({
     status: "ok",
     timestamp: new Date().toISOString(),
+  });
+});
+
+app.get("/api/badges-test", (req, res) => {
+  res.json({
+    success: true,
+    message: "Badge route is reaching server",
   });
 });
 
@@ -107,11 +123,10 @@ mongoose
     console.log("✅ Connected to MongoDB");
 
     app.listen(PORT, () => {
-      console.log(` Server running on http://localhost:${PORT}`);
+      console.log(`Server running onfedv http://localhost:${PORT}`);
     });
   })
   .catch((error) => {
-    console.error(" MongoDB connection error:", error.message);
-
+    console.error("MongoDB connection error:", error.message);
     process.exit(1);
   });

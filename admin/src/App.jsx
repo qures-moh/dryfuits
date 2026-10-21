@@ -2,6 +2,7 @@ import React from "react";
 import { Navigate, Route, Routes } from "react-router-dom";
 import { Toaster } from "react-hot-toast";
 import { ConfirmProvider } from "./context/ConfirmContext";
+import { SiteSettingsProvider } from "./context/SiteSettingsContext";
 import AdminLayout from "./components/AdminLayout";
 import Dashboard from "./components/Dashboard";
 import Login from "./pages/Login";
@@ -12,6 +13,7 @@ import Reviews from "./pages/Reviews";
 import Faqs from "./pages/Faqs";
 import Settings from "./pages/Settings";
 import CustomStudio from "./pages/CustomStudio";
+import AdminBadges from "./pages/AdminBadges";
 
 const ProtectedRoute = ({ children }) => {
   const token = localStorage.getItem("adminToken");
@@ -68,109 +70,122 @@ const App = () => {
           },
         }}
       />
-      <ConfirmProvider>
-        <Routes>
-        <Route path="/login" element={<Login />} />
+      <SiteSettingsProvider>
+        <ConfirmProvider>
+          <Routes>
+          <Route path="/login" element={<Login />} />
 
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Dashboard />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/dashboard"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Dashboard />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/products"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Products />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/products"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Products />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/products/add"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <AddProduct />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/products/add"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AddProduct />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/categories"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Categories />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/categories"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Categories />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/custom-studio"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <CustomStudio />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/custom-studio"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <CustomStudio />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/reviews"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Reviews />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/reviews"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Reviews />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/faqs"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Faqs />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/faqs"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Faqs />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/settings"
-          element={
-            <ProtectedRoute>
-              <AdminLayout>
-                <Settings />
-              </AdminLayout>
-            </ProtectedRoute>
-          }
-        />
+          <Route
+            path="/settings"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <Settings />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="/"
-          element={<Navigate to="/dashboard" replace />}
-        />
+          <Route
+            path="/"
+            element={<Navigate to="/dashboard" replace />}
+          />
+          <Route
+            path="/badges"
+            element={
+              <ProtectedRoute>
+                <AdminLayout>
+                  <AdminBadges />
+                </AdminLayout>
+              </ProtectedRoute>
+            }
+          />
 
-        <Route
-          path="*"
-          element={<Navigate to="/dashboard" replace />}
-        />
-        </Routes>
-      </ConfirmProvider>
+          <Route
+            path="*"
+            element={<Navigate to="/dashboard" replace />}
+          />
+
+          </Routes>
+        </ConfirmProvider>
+      </SiteSettingsProvider>
     </>
   );
 };

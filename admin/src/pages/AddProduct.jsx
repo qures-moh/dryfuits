@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import {
@@ -23,11 +22,11 @@ const AddProduct = () => {
   const fileInputRef = useRef(null);
 
   const [categories, setCategories] = useState([]);
+  const [badges, setBadges] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
   const [errors, setErrors] = useState({});
 
-  // Multiple product images (up to 5)
   const [images, setImages] = useState([]);
   const [uploadingImage, setUploadingImage] = useState(false);
   const [uploadSuccess, setUploadSuccess] = useState(false);
@@ -78,7 +77,20 @@ const AddProduct = () => {
       }
     };
 
+    const loadBadges = async () => {
+      try {
+        const res = await api.get("/badges");
+
+        if (res.data?.success && Array.isArray(res.data.badges)) {
+          setBadges(res.data.badges);
+        }
+      } catch (err) {
+        console.warn("Could not fetch badges:", err);
+      }
+    };
+
     loadCategories();
+    loadBadges();
   }, []);
 
   const handleChange = (e) => {
@@ -123,7 +135,8 @@ const AddProduct = () => {
     }
 
     if (!images.length && !formData.image) {
-      newErrors.image = "At least 1 product image is required (up to 5 images)";
+      newErrors.image =
+        "At least 1 product image is required (up to 5 images)";
     }
 
     if (!formData.origin.trim()) {
@@ -137,7 +150,8 @@ const AddProduct = () => {
     if (!formData.shortDesc.trim()) {
       newErrors.shortDesc = "Short description is required";
     } else if (formData.shortDesc.trim().length < 10) {
-      newErrors.shortDesc = "Short description must be at least 10 characters";
+      newErrors.shortDesc =
+        "Short description must be at least 10 characters";
     }
 
     if (!formData.description.trim()) {
@@ -201,6 +215,7 @@ const AddProduct = () => {
     if (!fileList.length) return;
 
     const remainingSlots = 5 - images.length;
+
     if (remainingSlots <= 0) {
       toast.error("Maximum 5 images allowed. Please remove an image first.");
       e.target.value = "";
@@ -208,9 +223,12 @@ const AddProduct = () => {
     }
 
     if (fileList.length > remainingSlots) {
-      toast(`Adding first ${remainingSlots} image(s). Maximum 5 images allowed.`, {
-        icon: "ℹ️",
-      });
+      toast(
+        `Adding first ${remainingSlots} image(s). Maximum 5 images allowed.`,
+        {
+          icon: "ℹ️",
+        }
+      );
     }
 
     const filesToUpload = fileList.slice(0, remainingSlots);
@@ -229,6 +247,7 @@ const AddProduct = () => {
           ...prev,
           image: "Only JPG, PNG, WEBP, GIF and SVG images are allowed",
         }));
+
         toast.error(`"${file.name}" has an invalid image type`);
         e.target.value = "";
         return;
@@ -239,6 +258,7 @@ const AddProduct = () => {
           ...prev,
           image: "File size must not exceed 5MB per image",
         }));
+
         toast.error(`"${file.name}" exceeds 5MB limit`);
         e.target.value = "";
         return;
@@ -252,11 +272,13 @@ const AddProduct = () => {
 
       let uploadedUrls = [];
 
-      // Try batch multi-upload if multiple files
       if (filesToUpload.length > 1) {
         try {
           const multiData = new FormData();
-          filesToUpload.forEach((file) => multiData.append("images", file));
+
+          filesToUpload.forEach((file) =>
+            multiData.append("images", file)
+          );
 
           const res = await api.post("/upload/multiple", multiData, {
             headers: {
@@ -264,16 +286,22 @@ const AddProduct = () => {
             },
           });
 
-          const urls = res.data?.imageUrls || res.data?.filePaths || res.data?.urls;
+          const urls =
+            res.data?.imageUrls ||
+            res.data?.filePaths ||
+            res.data?.urls;
+
           if (Array.isArray(urls) && urls.length > 0) {
             uploadedUrls = urls;
           }
         } catch (err) {
-          console.warn("Multi-upload fallback to individual uploads:", err);
+          console.warn(
+            "Multi-upload fallback to individual uploads:",
+            err
+          );
         }
       }
 
-      // If multi-upload did not return urls or single file, upload individually
       if (!uploadedUrls.length) {
         for (const file of filesToUpload) {
           const singleData = new FormData();
@@ -285,7 +313,11 @@ const AddProduct = () => {
             },
           });
 
-          const url = res.data?.imageUrl || res.data?.filePath || res.data?.url;
+          const url =
+            res.data?.imageUrl ||
+            res.data?.filePath ||
+            res.data?.url;
+
           if (url) {
             uploadedUrls.push(url);
           }
@@ -294,35 +326,47 @@ const AddProduct = () => {
 
       if (uploadedUrls.length > 0) {
         const nextImages = [...images, ...uploadedUrls].slice(0, 5);
+
         setImages(nextImages);
+
         setFormData((prev) => ({
           ...prev,
           image: nextImages[0] || "",
         }));
+
         setUploadSuccess(true);
+
         toast.success(
-          `${uploadedUrls.length} image${uploadedUrls.length > 1 ? "s" : ""} uploaded successfully!`
+          `${uploadedUrls.length} image${
+            uploadedUrls.length > 1 ? "s" : ""
+          } uploaded successfully!`
         );
       } else {
         setErrors((prev) => ({
           ...prev,
-          image: "Image upload failed. Server did not return image URLs",
+          image:
+            "Image upload failed. Server did not return image URLs",
         }));
+
         toast.error("Image upload failed");
       }
     } catch (err) {
       console.error("Upload failed:", err);
+
       const msg =
         err.response?.data?.message ||
         "Failed to upload image(s) to server via Multer";
+
       setErrors((prev) => ({
         ...prev,
         image: msg,
       }));
+
       setError(msg);
       toast.error(msg);
     } finally {
       setUploadingImage(false);
+
       if (fileInputRef.current) {
         fileInputRef.current.value = "";
       }
@@ -330,31 +374,45 @@ const AddProduct = () => {
   };
 
   const handleRemoveImage = (indexToRemove) => {
-    const nextImages = images.filter((_, idx) => idx !== indexToRemove);
+    const nextImages = images.filter(
+      (_, idx) => idx !== indexToRemove
+    );
+
     setImages(nextImages);
+
     setFormData((prev) => ({
       ...prev,
       image: nextImages[0] || "",
     }));
+
     if (nextImages.length === 0) {
       setErrors((prev) => ({
         ...prev,
-        image: "At least 1 product image is required (up to 5 images)",
+        image:
+          "At least 1 product image is required (up to 5 images)",
       }));
+
       setUploadSuccess(false);
     }
   };
 
   const handleSetPrimaryImage = (indexToPrimary) => {
     if (indexToPrimary === 0) return;
+
     const target = images[indexToPrimary];
-    const rest = images.filter((_, idx) => idx !== indexToPrimary);
+    const rest = images.filter(
+      (_, idx) => idx !== indexToPrimary
+    );
+
     const nextImages = [target, ...rest];
+
     setImages(nextImages);
+
     setFormData((prev) => ({
       ...prev,
       image: nextImages[0] || "",
     }));
+
     toast.success("Main cover image updated!");
   };
 
@@ -404,14 +462,17 @@ const AddProduct = () => {
       },
     ];
 
-    const finalImages = images.length > 0 ? images.slice(0, 5) : [formData.image.trim()].filter(Boolean);
+    const finalImages =
+      images.length > 0
+        ? images.slice(0, 5)
+        : [formData.image.trim()].filter(Boolean);
 
     const payload = {
       name: formData.name.trim(),
       brand: formData.brand.trim(),
       category: formData.category,
       basePrice: basePriceNum,
-      badge: formData.badge.trim(),
+      badge: formData.badge,
       inStock: Boolean(formData.inStock),
       isBucket: Boolean(formData.isBucket),
       rating: Number(formData.rating),
@@ -430,7 +491,9 @@ const AddProduct = () => {
 
       await api.post("/products", payload);
 
-      toast.success("Product created successfully with images! It is now live on the store.");
+      toast.success(
+        "Product created successfully with images! It is now live on the store."
+      );
 
       navigate("/products");
     } catch (err) {
@@ -563,7 +626,8 @@ const AddProduct = () => {
                 fontSize: "12px",
                 fontWeight: "600",
                 color: images.length > 0 ? "#1e40af" : "#64748b",
-                background: images.length > 0 ? "#dbeafe" : "#f1f5f9",
+                background:
+                  images.length > 0 ? "#dbeafe" : "#f1f5f9",
                 padding: "3px 10px",
                 borderRadius: "20px",
               }}
@@ -581,7 +645,6 @@ const AddProduct = () => {
             style={{ display: "none" }}
           />
 
-          {/* Images Grid */}
           <div
             style={{
               display: "flex",
@@ -604,9 +667,12 @@ const AddProduct = () => {
                     height: "115px",
                     borderRadius: "10px",
                     overflow: "hidden",
-                    border: isPrimary ? "2px solid #2563eb" : "1.5px solid #cbd5e1",
+                    border: isPrimary
+                      ? "2px solid #2563eb"
+                      : "1.5px solid #cbd5e1",
                     background: "#ffffff",
-                    boxShadow: "0 2px 8px rgba(0,0,0,0.06)",
+                    boxShadow:
+                      "0 2px 8px rgba(0,0,0,0.06)",
                     flexShrink: 0,
                   }}
                 >
@@ -624,14 +690,17 @@ const AddProduct = () => {
                     }}
                   />
 
-                  {/* Primary / Index Badge */}
                   <div
                     style={{
                       position: "absolute",
                       top: "5px",
                       left: "5px",
-                      background: isPrimary ? "rgba(30, 41, 59, 0.9)" : "rgba(0, 0, 0, 0.65)",
-                      color: isPrimary ? "#facc15" : "#ffffff",
+                      background: isPrimary
+                        ? "rgba(30, 41, 59, 0.9)"
+                        : "rgba(0, 0, 0, 0.65)",
+                      color: isPrimary
+                        ? "#facc15"
+                        : "#ffffff",
                       fontSize: "10.5px",
                       fontWeight: "700",
                       padding: "2px 6px",
@@ -642,11 +711,16 @@ const AddProduct = () => {
                       lineHeight: "1.2",
                     }}
                   >
-                    {isPrimary && <Star size={10} fill="#facc15" color="#facc15" />}
+                    {isPrimary && (
+                      <Star
+                        size={10}
+                        fill="#facc15"
+                        color="#facc15"
+                      />
+                    )}
                     {isPrimary ? "Cover" : `#${index + 1}`}
                   </div>
 
-                  {/* Action Buttons */}
                   <div
                     style={{
                       position: "absolute",
@@ -659,10 +733,13 @@ const AddProduct = () => {
                     {!isPrimary && (
                       <button
                         type="button"
-                        onClick={() => handleSetPrimaryImage(index)}
+                        onClick={() =>
+                          handleSetPrimaryImage(index)
+                        }
                         title="Set as Main Cover Image"
                         style={{
-                          background: "rgba(255, 255, 255, 0.92)",
+                          background:
+                            "rgba(255, 255, 255, 0.92)",
                           color: "#ca8a04",
                           border: "none",
                           borderRadius: "50%",
@@ -672,10 +749,15 @@ const AddProduct = () => {
                           alignItems: "center",
                           justifyContent: "center",
                           cursor: "pointer",
-                          boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+                          boxShadow:
+                            "0 1px 4px rgba(0,0,0,0.2)",
                         }}
                       >
-                        <Star size={12} fill="#ca8a04" color="#ca8a04" />
+                        <Star
+                          size={12}
+                          fill="#ca8a04"
+                          color="#ca8a04"
+                        />
                       </button>
                     )}
 
@@ -684,7 +766,8 @@ const AddProduct = () => {
                       onClick={() => handleRemoveImage(index)}
                       title="Remove image"
                       style={{
-                        background: "rgba(220, 38, 38, 0.88)",
+                        background:
+                          "rgba(220, 38, 38, 0.88)",
                         color: "#ffffff",
                         border: "none",
                         borderRadius: "50%",
@@ -694,7 +777,8 @@ const AddProduct = () => {
                         alignItems: "center",
                         justifyContent: "center",
                         cursor: "pointer",
-                        boxShadow: "0 1px 4px rgba(0,0,0,0.2)",
+                        boxShadow:
+                          "0 1px 4px rgba(0,0,0,0.2)",
                       }}
                     >
                       <X size={13} />
@@ -704,11 +788,12 @@ const AddProduct = () => {
               );
             })}
 
-            {/* Add More Tile */}
             {images.length < 5 && (
               <button
                 type="button"
-                onClick={() => fileInputRef.current?.click()}
+                onClick={() =>
+                  fileInputRef.current?.click()
+                }
                 disabled={uploadingImage}
                 style={{
                   width: "115px",
@@ -721,7 +806,9 @@ const AddProduct = () => {
                   alignItems: "center",
                   justifyContent: "center",
                   gap: "6px",
-                  cursor: uploadingImage ? "not-allowed" : "pointer",
+                  cursor: uploadingImage
+                    ? "not-allowed"
+                    : "pointer",
                   color: "#475569",
                   fontSize: "12px",
                   fontWeight: "600",
@@ -731,14 +818,25 @@ const AddProduct = () => {
               >
                 {uploadingImage ? (
                   <>
-                    <Loader2 size={20} className="animate-spin" color="#2563eb" />
-                    <span style={{ fontSize: "11px" }}>Uploading...</span>
+                    <Loader2
+                      size={20}
+                      className="animate-spin"
+                      color="#2563eb"
+                    />
+                    <span style={{ fontSize: "11px" }}>
+                      Uploading...
+                    </span>
                   </>
                 ) : (
                   <>
                     <Plus size={22} color="#2563eb" />
                     <span>Add Image</span>
-                    <span style={{ fontSize: "10px", color: "#64748b" }}>
+                    <span
+                      style={{
+                        fontSize: "10px",
+                        color: "#64748b",
+                      }}
+                    >
                       ({5 - images.length} left)
                     </span>
                   </>
@@ -747,7 +845,6 @@ const AddProduct = () => {
             )}
           </div>
 
-          {/* Action Row */}
           <div
             style={{
               display: "flex",
@@ -758,17 +855,27 @@ const AddProduct = () => {
           >
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
-              disabled={uploadingImage || images.length >= 5}
+              onClick={() =>
+                fileInputRef.current?.click()
+              }
+              disabled={
+                uploadingImage || images.length >= 5
+              }
               style={{
-                background: images.length >= 5 ? "#94a3b8" : "#172554",
+                background:
+                  images.length >= 5
+                    ? "#94a3b8"
+                    : "#172554",
                 color: "#ffffff",
                 border: "none",
                 padding: "9px 16px",
                 borderRadius: "8px",
                 fontWeight: "600",
                 fontSize: "13px",
-                cursor: uploadingImage || images.length >= 5 ? "not-allowed" : "pointer",
+                cursor:
+                  uploadingImage || images.length >= 5
+                    ? "not-allowed"
+                    : "pointer",
                 display: "inline-flex",
                 alignItems: "center",
                 gap: "8px",
@@ -776,7 +883,10 @@ const AddProduct = () => {
             >
               {uploadingImage ? (
                 <>
-                  <Loader2 size={16} className="animate-spin" />
+                  <Loader2
+                    size={16}
+                    className="animate-spin"
+                  />
                   Uploading via Multer...
                 </>
               ) : (
@@ -784,7 +894,9 @@ const AddProduct = () => {
                   <Upload size={16} />
                   {images.length === 0
                     ? "Choose Images from Computer (Up to 5)"
-                    : `Add More Images (${5 - images.length} remaining)`}
+                    : `Add More Images (${
+                        5 - images.length
+                      } remaining)`}
                 </>
               )}
             </button>
@@ -795,7 +907,8 @@ const AddProduct = () => {
                 color: "#64748b",
               }}
             >
-              Supports JPG, PNG, WEBP, GIF, SVG. Max 5MB per image.
+              Supports JPG, PNG, WEBP, GIF, SVG. Max 5MB
+              per image.
             </span>
           </div>
 
@@ -812,11 +925,15 @@ const AddProduct = () => {
               }}
             >
               <CheckCircle size={15} />
-              {images.length} image{images.length > 1 ? "s" : ""} ready for this product. Cover image: Image #1.
+              {images.length} image
+              {images.length > 1 ? "s" : ""} ready for this
+              product. Cover image: Image #1.
             </div>
           )}
 
-          {errors.image && <div style={errorStyle}>{errors.image}</div>}
+          {errors.image && (
+            <div style={errorStyle}>{errors.image}</div>
+          )}
         </div>
 
         <div
@@ -848,7 +965,11 @@ const AddProduct = () => {
               style={inputStyle}
             />
 
-            {errors.name && <div style={errorStyle}>{errors.name}</div>}
+            {errors.name && (
+              <div style={errorStyle}>
+                {errors.name}
+              </div>
+            )}
           </div>
 
           <div>
@@ -872,7 +993,11 @@ const AddProduct = () => {
               style={inputStyle}
             />
 
-            {errors.brand && <div style={errorStyle}>{errors.brand}</div>}
+            {errors.brand && (
+              <div style={errorStyle}>
+                {errors.brand}
+              </div>
+            )}
           </div>
         </div>
 
@@ -915,17 +1040,29 @@ const AddProduct = () => {
 
               {categories.length === 0 && (
                 <>
-                  <option value="nuts">Premium Nuts</option>
-                  <option value="buckets">Gift Buckets & Hampers</option>
-                  <option value="dates-figs">Dates & Dried Figs</option>
-                  <option value="berries-raisins">Berries & Raisins</option>
-                  <option value="spices-seeds">Spices & Super Seeds</option>
+                  <option value="nuts">
+                    Premium Nuts
+                  </option>
+                  <option value="buckets">
+                    Gift Buckets & Hampers
+                  </option>
+                  <option value="dates-figs">
+                    Dates & Dried Figs
+                  </option>
+                  <option value="berries-raisins">
+                    Berries & Raisins
+                  </option>
+                  <option value="spices-seeds">
+                    Spices & Super Seeds
+                  </option>
                 </>
               )}
             </select>
 
             {errors.category && (
-              <div style={errorStyle}>{errors.category}</div>
+              <div style={errorStyle}>
+                {errors.category}
+              </div>
             )}
           </div>
 
@@ -953,7 +1090,9 @@ const AddProduct = () => {
             />
 
             {errors.basePrice && (
-              <div style={errorStyle}>{errors.basePrice}</div>
+              <div style={errorStyle}>
+                {errors.basePrice}
+              </div>
             )}
           </div>
 
@@ -969,14 +1108,23 @@ const AddProduct = () => {
               Badge
             </label>
 
-            <input
-              type="text"
+            <select
               name="badge"
-              placeholder="e.g. Best Seller, Organic, New"
               value={formData.badge}
               onChange={handleChange}
               style={inputStyle}
-            />
+            >
+              <option value="">No Badge</option>
+
+              {badges.map((badge) => (
+                <option
+                  key={badge._id}
+                  value={badge._id}
+                >
+                  {badge.name}
+                </option>
+              ))}
+            </select>
           </div>
         </div>
 
@@ -1009,7 +1157,11 @@ const AddProduct = () => {
               style={inputStyle}
             />
 
-            {errors.origin && <div style={errorStyle}>{errors.origin}</div>}
+            {errors.origin && (
+              <div style={errorStyle}>
+                {errors.origin}
+              </div>
+            )}
           </div>
 
           <div>
@@ -1034,7 +1186,9 @@ const AddProduct = () => {
             />
 
             {errors.storage && (
-              <div style={errorStyle}>{errors.storage}</div>
+              <div style={errorStyle}>
+                {errors.storage}
+              </div>
             )}
           </div>
         </div>
@@ -1061,7 +1215,9 @@ const AddProduct = () => {
           />
 
           {errors.shortDesc && (
-            <div style={errorStyle}>{errors.shortDesc}</div>
+            <div style={errorStyle}>
+              {errors.shortDesc}
+            </div>
           )}
         </div>
 
@@ -1087,7 +1243,9 @@ const AddProduct = () => {
           />
 
           {errors.description && (
-            <div style={errorStyle}>{errors.description}</div>
+            <div style={errorStyle}>
+              {errors.description}
+            </div>
           )}
         </div>
 
@@ -1123,7 +1281,9 @@ const AddProduct = () => {
             />
 
             {errors.weightOption1Price && (
-              <div style={errorStyle}>{errors.weightOption1Price}</div>
+              <div style={errorStyle}>
+                {errors.weightOption1Price}
+              </div>
             )}
           </div>
 
@@ -1151,7 +1311,9 @@ const AddProduct = () => {
             />
 
             {errors.weightOption2Price && (
-              <div style={errorStyle}>{errors.weightOption2Price}</div>
+              <div style={errorStyle}>
+                {errors.weightOption2Price}
+              </div>
             )}
           </div>
 
@@ -1179,7 +1341,9 @@ const AddProduct = () => {
             />
 
             {errors.weightOption3Price && (
-              <div style={errorStyle}>{errors.weightOption3Price}</div>
+              <div style={errorStyle}>
+                {errors.weightOption3Price}
+              </div>
             )}
           </div>
         </div>
@@ -1239,16 +1403,23 @@ const AddProduct = () => {
             fontWeight: "600",
             fontSize: "15px",
             border: "none",
-            cursor: loading || uploadingImage ? "not-allowed" : "pointer",
+            cursor:
+              loading || uploadingImage
+                ? "not-allowed"
+                : "pointer",
             display: "inline-flex",
             alignItems: "center",
             gap: "8px",
-            opacity: loading || uploadingImage ? 0.7 : 1,
+            opacity:
+              loading || uploadingImage ? 0.7 : 1,
           }}
         >
           {loading ? (
             <>
-              <Loader2 size={18} className="animate-spin" />
+              <Loader2
+                size={18}
+                className="animate-spin"
+              />
               Saving Product...
             </>
           ) : (
