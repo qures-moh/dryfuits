@@ -10,6 +10,7 @@ const Category = require('./models/Category');
 const Testimonial = require('./models/Testimonial');
 const FAQ = require('./models/FAQ');
 const SiteSettings = require('./models/SiteSettings');
+const Badge = require('./models/Badge');
 
 const CATEGORIES = [
   { categoryId: 'all', name: 'All Dry Fruits', icon: 'Sparkles', sortOrder: 0 },
@@ -388,7 +389,8 @@ async function seed() {
       Category.deleteMany({}),
       Testimonial.deleteMany({}),
       FAQ.deleteMany({}),
-      SiteSettings.deleteMany({})
+      SiteSettings.deleteMany({}),
+      Badge.deleteMany({})
     ]);
     console.log('🗑️  Cleared existing data');
 
@@ -405,8 +407,25 @@ async function seed() {
     await Category.insertMany(CATEGORIES);
     console.log(`📁 ${CATEGORIES.length} categories seeded`);
 
+    // Seed badges
+    const badgeNames = [...new Set(PRODUCTS.map((p) => p.badge).filter(Boolean))];
+    const createdBadges = await Badge.insertMany(
+      badgeNames.map((name) => ({ name, isActive: true }))
+    );
+    const badgeMap = {};
+    createdBadges.forEach((b) => {
+      badgeMap[b.name] = b._id;
+    });
+    console.log(`🏷️  ${createdBadges.length} badges seeded`);
+
+    // Prepare products with badge ObjectIds
+    const productsToSeed = PRODUCTS.map((p) => ({
+      ...p,
+      badge: p.badge ? badgeMap[p.badge] || null : null,
+    }));
+
     // Seed products
-    await Product.insertMany(PRODUCTS);
+    await Product.insertMany(productsToSeed);
     console.log(`📦 ${PRODUCTS.length} products seeded`);
 
     // Seed testimonials

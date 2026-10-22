@@ -139,10 +139,10 @@ export const ProductDetailsModal = ({ product, onClose }) => {
                 }}
               />
 
-              {product.badge && (
+              {Boolean(product.badge) && (
                 <span className="details-badge">
                   {product.isBucket && <Gift size={13} />}
-                  {product.badge}
+                  {typeof product.badge === "object" ? product.badge?.name : product.badge}
                 </span>
               )}
             </div>

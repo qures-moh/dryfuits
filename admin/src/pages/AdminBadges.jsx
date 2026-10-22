@@ -169,14 +169,7 @@ const AdminBadges = () => {
         </div>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "minmax(280px, 360px) 1fr",
-          gap: "24px",
-          alignItems: "start",
-        }}
-      >
+      <div className="admin-split-layout">
         <div
           className="recent-orders-card"
           style={{

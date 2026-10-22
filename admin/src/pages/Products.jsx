@@ -169,7 +169,7 @@ const Products = () => {
       brand: product.brand || "GOLDEN HARVEST",
       category: product.category || (categories[0]?.categoryId || categories[0]?.name || "nuts"),
       basePrice: product.basePrice !== undefined ? product.basePrice : 0,
-      badge: product.badge || "",
+      badge: typeof product.badge === "object" ? product.badge?.name || "" : product.badge || "",
       inStock: product.inStock !== false,
       isBucket: Boolean(product.isBucket),
       rating: product.rating !== undefined ? product.rating : 4.8,
@@ -485,11 +485,12 @@ const Products = () => {
 
   const filtered = products.filter((p) => {
     const q = search.trim().toLowerCase();
+    const badgeText = typeof p.badge === "object" ? p.badge?.name : p.badge;
     const matchesSearch =
       !q ||
       p.name?.toLowerCase().includes(q) ||
       p.category?.toLowerCase().includes(q) ||
-      p.badge?.toLowerCase().includes(q) ||
+      badgeText?.toLowerCase().includes(q) ||
       p.brand?.toLowerCase().includes(q);
 
     const matchesCategory =
@@ -500,7 +501,8 @@ const Products = () => {
   });
 
   const getBadgeStyle = (badge) => {
-    const b = badge?.toLowerCase() || "";
+    const raw = typeof badge === "object" ? badge?.name : badge;
+    const b = (typeof raw === "string" ? raw : "")?.toLowerCase() || "";
     if (b.includes("best") || b.includes("seller")) {
       return { bg: "#fef3c7", text: "#b45309", border: "#fde68a" };
     }
@@ -705,7 +707,7 @@ const Products = () => {
         </div>
 
         {/* Category Quick Pills */}
-        <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
+        <div className="admin-filter-pills">
           <span style={{ fontSize: "12px", fontWeight: "600", color: "#64748b", marginRight: "4px" }}>
             Filter:
           </span>
@@ -877,25 +879,27 @@ const Products = () => {
 
                     {/* Badge */}
                     <td>
-                      {product.badge ? (
-                        <span
-                          style={{
-                            background: badgeStyle.bg,
-                            color: badgeStyle.text,
-                            border: `1px solid ${badgeStyle.border}`,
-                            padding: "4px 9px",
-                            borderRadius: "6px",
-                            fontSize: "11.5px",
-                            fontWeight: "700",
-                            whiteSpace: "nowrap",
-                            display: "inline-block",
-                          }}
-                        >
-                          {product.badge}
-                        </span>
-                      ) : (
-                        <span style={{ color: "#cbd5e1" }}>—</span>
-                      )}
+                      {(() => {
+                        const badgeText = typeof product.badge === "object" ? product.badge?.name : product.badge;
+                        if (!badgeText) return <span style={{ color: "#cbd5e1" }}>—</span>;
+                        return (
+                          <span
+                            style={{
+                              background: badgeStyle.bg,
+                              color: badgeStyle.text,
+                              border: `1px solid ${badgeStyle.border}`,
+                              padding: "4px 9px",
+                              borderRadius: "6px",
+                              fontSize: "11.5px",
+                              fontWeight: "700",
+                              whiteSpace: "nowrap",
+                              display: "inline-block",
+                            }}
+                          >
+                            {badgeText}
+                          </span>
+                        );
+                      })()}
                     </td>
 
                     {/* Stock Status */}
@@ -1179,9 +1183,9 @@ const Products = () => {
                   <span style={{ fontSize: "11px", fontWeight: "700", textTransform: "uppercase", background: "#eff6ff", color: "#1d4ed8", padding: "3px 8px", borderRadius: "4px" }}>
                     {productToView.category}
                   </span>
-                  {productToView.badge && (
+                  {Boolean(productToView.badge) && (
                     <span style={{ fontSize: "11px", fontWeight: "700", background: "#fef3c7", color: "#b45309", padding: "3px 8px", borderRadius: "4px" }}>
-                      {productToView.badge}
+                      {typeof productToView.badge === "object" ? productToView.badge?.name : productToView.badge}
                     </span>
                   )}
                   {productToView.isBucket && (
@@ -1207,7 +1211,7 @@ const Products = () => {
             </div>
 
             {/* Body */}
-            <div style={{ display: "grid", gridTemplateColumns: "170px 1fr", gap: "20px", marginBottom: "20px" }}>
+            <div className="admin-modal-product-grid">
               <div>
                 <div
                   style={{
@@ -1435,7 +1439,7 @@ const Products = () => {
 
             <form onSubmit={handleSaveEdit}>
               {/* Form Grid */}
-              <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px", marginBottom: "16px" }}>
+              <div className="admin-form-grid-2">
                 {/* Product Name */}
                 <div style={{ gridColumn: "1 / -1" }}>
                   <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: "600", color: "#334155" }}>
@@ -1553,7 +1557,7 @@ const Products = () => {
                   <div style={{ fontSize: "13px", fontWeight: "700", color: "#0f172a", marginBottom: "10px" }}>
                     Weight Options Pricing (₹)
                   </div>
-                  <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: "12px" }}>
+                  <div className="admin-form-grid-3">
                     <div>
                       <label style={{ display: "block", marginBottom: "4px", fontSize: "12px", color: "#64748b" }}>
                         500g Tier (₹)

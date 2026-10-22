@@ -16,6 +16,7 @@ import { fetchDashboard } from "../redux/slices/dashboardSlice";
 import { useSiteSettings } from "../context/SiteSettingsContext";
 
 const Dashboard = () => {
+  const dispatch = useDispatch();
   const { siteSettings } = useSiteSettings();
   const brandName = siteSettings?.brandName || "Golden Harvest";
 

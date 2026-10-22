@@ -145,7 +145,7 @@ const Categories = () => {
         </div>
       )}
 
-      <div style={{ display: "grid", gridTemplateColumns: "1fr 2fr", gap: "24px" }}>
+      <div className="admin-split-layout">
         <form onSubmit={handleAdd} style={{ background: "#ffffff", padding: "24px", borderRadius: "12px", border: "1px solid #e5e7eb", height: "fit-content" }}>
           <h3 style={{ marginBottom: "16px", fontSize: "16px", fontWeight: "600" }}>Add Category</h3>
 

@@ -936,14 +936,7 @@ const AddProduct = () => {
           )}
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "20px",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="admin-form-grid-2">
           <div>
             <label
               style={{
@@ -1001,14 +994,7 @@ const AddProduct = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: "20px",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="admin-form-grid-3">
           <div>
             <label
               style={{
@@ -1128,14 +1114,7 @@ const AddProduct = () => {
           </div>
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "20px",
-            marginBottom: "20px",
-          }}
-        >
+        <div className="admin-form-grid-2">
           <div>
             <label
               style={{
@@ -1249,14 +1228,7 @@ const AddProduct = () => {
           )}
         </div>
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr 1fr",
-            gap: "20px",
-            marginBottom: "24px",
-          }}
-        >
+        <div className="admin-form-grid-3">
           <div>
             <label
               style={{

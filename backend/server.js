@@ -117,10 +117,18 @@ app.use((err, req, res, next) => {
 
 const PORT = process.env.PORT || 5000;
 
+const migrateBadges = require("./utils/migrateBadges");
+
 mongoose
   .connect(process.env.MONGODB_URI)
-  .then(() => {
+  .then(async () => {
     console.log("✅ Connected to MongoDB");
+
+    try {
+      await migrateBadges();
+    } catch (migErr) {
+      console.warn("Badge migration notice:", migErr.message);
+    }
 
     app.listen(PORT, () => {
       console.log(`Server running onfedv http://localhost:${PORT}`);

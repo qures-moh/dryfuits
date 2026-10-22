@@ -148,6 +148,9 @@ const deleteBadge = async (req, res) => {
 
     await Badge.findByIdAndDelete(id);
 
+    const Product = require("../models/Product");
+    await Product.updateMany({ badge: id }, { $set: { badge: null } });
+
     res.status(200).json({
       success: true,
       message: "Badge deleted successfully"

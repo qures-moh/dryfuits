@@ -269,13 +269,7 @@ const Faqs = () => {
         </div>
       )}
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "1fr 2fr",
-          gap: "24px",
-        }}
-      >
+      <div className="admin-split-layout">
         <form
           onSubmit={handleAdd}
           style={{

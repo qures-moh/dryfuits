@@ -1042,15 +1042,7 @@ const CustomStudio = () => {
         </button>
       </div>
 
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns:
-            "minmax(300px, 1fr) minmax(500px, 2fr)",
-          gap: "24px",
-          alignItems: "start",
-        }}
-      >
+      <div className="admin-split-layout">
         <div
           style={{
             background: "#ffffff",
@@ -1136,15 +1128,7 @@ const CustomStudio = () => {
                 )}
               </div>
 
-              <div
-                style={{
-                  display: "grid",
-                  gridTemplateColumns:
-                    "1fr 1fr",
-                  gap: "12px",
-                  marginBottom: "14px",
-                }}
-              >
+              <div className="admin-form-grid-2">
                 <div>
                   <label
                     style={{

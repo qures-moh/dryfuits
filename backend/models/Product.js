@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+require("./Badge");
 
 const weightOptionSchema = new mongoose.Schema(
   {

@@ -12,6 +12,27 @@ const AdminLayout = ({ children }) => {
     }
   });
 
+  React.useEffect(() => {
+    const handleResize = () => {
+      if (window.innerWidth > 900) {
+        setMobileOpen(false);
+      }
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  React.useEffect(() => {
+    if (mobileOpen && window.innerWidth <= 900) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileOpen]);
+
   const handleToggle = () => {
     if (typeof window !== "undefined" && window.innerWidth <= 900) {
       setMobileOpen((prev) => !prev);

@@ -99,28 +99,32 @@ export const ProductCard = ({ product }) => {
           }}
         />
 
-        {product.badge && (
-          <div className="gh-product-card__badge-wrap">
-            <span
-              className={`gh-product-card__badge ${
-                product.badge === 'Sold out'
-                  ? 'gh-product-card__badge--soldout'
-                  : product.isBucket
-                    ? 'gh-product-card__badge--bucket'
-                    : 'gh-product-card__badge--best'
-              }`}
-            >
-              {product.isBucket && (
-                <Gift
-                  size={12}
-                  strokeWidth={2.2}
-                />
-              )}
+        {Boolean(product.badge) && (() => {
+          const badgeText = typeof product.badge === 'object' ? product.badge?.name : product.badge;
+          if (!badgeText) return null;
+          return (
+            <div className="gh-product-card__badge-wrap">
+              <span
+                className={`gh-product-card__badge ${
+                  badgeText === 'Sold out'
+                    ? 'gh-product-card__badge--soldout'
+                    : product.isBucket
+                      ? 'gh-product-card__badge--bucket'
+                      : 'gh-product-card__badge--best'
+                }`}
+              >
+                {product.isBucket && (
+                  <Gift
+                    size={12}
+                    strokeWidth={2.2}
+                  />
+                )}
 
-              <span>{product.badge}</span>
-            </span>
-          </div>
-        )}
+                <span>{badgeText}</span>
+              </span>
+            </div>
+          );
+        })()}
 
         <div className="gh-product-card__quick-view">
           <button

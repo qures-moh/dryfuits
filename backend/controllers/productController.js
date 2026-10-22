@@ -1,14 +1,84 @@
 const mongoose = require("mongoose");
 const Product = require("../models/Product");
+const Badge = require("../models/Badge");
+
+const formatProductBadge = (product) => {
+  if (!product) return product;
+  const p = typeof product.toObject === "function" ? product.toObject() : { ...product };
+
+  if (p.badge && typeof p.badge === "object" && p.badge.name) {
+    p.badgeId = p.badge._id;
+    p.badgeData = p.badge;
+    p.badge = p.badge.isActive !== false ? p.badge.name : "";
+  } else if (typeof p.badge === "string") {
+    p.badge = p.badge.trim();
+  } else {
+    p.badge = "";
+  }
+
+  return p;
+};
+
+const resolveBadgeId = async (badgeInput) => {
+  if (badgeInput === null || badgeInput === undefined) return null;
+  if (typeof badgeInput === "string" && !badgeInput.trim()) return null;
+
+  const Badge = require("../models/Badge");
+
+  // If already a valid ObjectId
+  if (mongoose.Types.ObjectId.isValid(badgeInput)) {
+    const existingBadge = await Badge.findById(badgeInput);
+    if (existingBadge) {
+      return existingBadge._id;
+    }
+  }
+
+  // If it's a string name (e.g. "Best Seller", "Crunchy", etc.)
+  if (typeof badgeInput === "string") {
+    const trimmed = badgeInput.trim();
+    if (!trimmed) return null;
+
+    const escaped = trimmed.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+    let badgeDoc = await Badge.findOne({
+      name: { $regex: new RegExp(`^${escaped}$`, "i") },
+    });
+
+    if (!badgeDoc) {
+      badgeDoc = await Badge.create({
+        name: trimmed,
+        isActive: true,
+      });
+    }
+
+    return badgeDoc._id;
+  }
+
+  return null;
+};
 
 exports.getAllProducts = async (req, res) => {
   try {
-    const products = await Product.find()
-      .populate("badge", "name isActive")
-      .sort({ sortOrder: 1, createdAt: -1 })
-      .lean();
+    let products;
+    try {
+      products = await Product.find()
+        .populate("badge", "name isActive")
+        .sort({ sortOrder: 1, createdAt: -1 })
+        .lean();
+    } catch (popError) {
+      if (popError.name === "CastError") {
+        console.warn("Retrying products fetch after migrating badges:", popError.message);
+        const migrateBadges = require("../utils/migrateBadges");
+        await migrateBadges();
+        products = await Product.find()
+          .populate("badge", "name isActive")
+          .sort({ sortOrder: 1, createdAt: -1 })
+          .lean();
+      } else {
+        throw popError;
+      }
+    }
 
-    return res.json(products);
+    return res.json(products.map(formatProductBadge));
   } catch (error) {
     console.error("Get products error:", error);
 
@@ -23,23 +93,39 @@ exports.getProductById = async (req, res) => {
     const { id } = req.params;
     let product = null;
 
-    if (mongoose.Types.ObjectId.isValid(id)) {
-      product = await Product.findById(id)
-        .populate("badge", "name isActive")
-        .lean();
-    }
+    const findWithPopulate = async () => {
+      let prod = null;
+      if (mongoose.Types.ObjectId.isValid(id)) {
+        prod = await Product.findById(id)
+          .populate("badge", "name isActive")
+          .lean();
+      }
 
-    if (!product) {
-      product = await Product.findOne({
-        name: {
-          $regex: new RegExp(
-            `^${id.replace(/-/g, " ")}$`,
-            "i"
-          ),
-        },
-      })
-        .populate("badge", "name isActive")
-        .lean();
+      if (!prod) {
+        prod = await Product.findOne({
+          name: {
+            $regex: new RegExp(
+              `^${id.replace(/-/g, " ")}$`,
+              "i"
+            ),
+          },
+        })
+          .populate("badge", "name isActive")
+          .lean();
+      }
+      return prod;
+    };
+
+    try {
+      product = await findWithPopulate();
+    } catch (popError) {
+      if (popError.name === "CastError") {
+        const migrateBadges = require("../utils/migrateBadges");
+        await migrateBadges();
+        product = await findWithPopulate();
+      } else {
+        throw popError;
+      }
     }
 
     if (!product) {
@@ -48,7 +134,7 @@ exports.getProductById = async (req, res) => {
       });
     }
 
-    return res.json(product);
+    return res.json(formatProductBadge(product));
   } catch (error) {
     console.error("Get product error:", error);
 
@@ -100,32 +186,7 @@ exports.createProduct = async (req, res) => {
       });
     }
 
-    if (
-      badge &&
-      !mongoose.Types.ObjectId.isValid(badge)
-    ) {
-      return res.status(400).json({
-        message: "Invalid badge",
-      });
-    }
-
-    if (badge) {
-      const Badge = require("../models/Badge");
-
-      const existingBadge = await Badge.findById(badge);
-
-      if (!existingBadge) {
-        return res.status(400).json({
-          message: "Badge not found",
-        });
-      }
-
-      if (!existingBadge.isActive) {
-        return res.status(400).json({
-          message: "Selected badge is inactive",
-        });
-      }
-    }
+    const resolvedBadgeId = await resolveBadgeId(badge);
 
     let galleryArray = [];
 
@@ -165,7 +226,7 @@ exports.createProduct = async (req, res) => {
       category: category.trim(),
       isBucket: Boolean(isBucket),
 
-      badge: badge || null,
+      badge: resolvedBadgeId,
 
       inStock:
         inStock !== undefined
@@ -224,7 +285,7 @@ exports.createProduct = async (req, res) => {
         .lean();
 
     return res.status(201).json(
-      populatedProduct
+      formatProductBadge(populatedProduct)
     );
   } catch (error) {
     console.error(
@@ -287,43 +348,7 @@ exports.updateProduct = async (req, res) => {
     }
 
     if (updateData.badge !== undefined) {
-      if (
-        updateData.badge === "" ||
-        updateData.badge === null
-      ) {
-        updateData.badge = null;
-      } else {
-        if (
-          !mongoose.Types.ObjectId.isValid(
-            updateData.badge
-          )
-        ) {
-          return res.status(400).json({
-            message: "Invalid badge",
-          });
-        }
-
-        const Badge =
-          require("../models/Badge");
-
-        const existingBadge =
-          await Badge.findById(
-            updateData.badge
-          );
-
-        if (!existingBadge) {
-          return res.status(400).json({
-            message: "Badge not found",
-          });
-        }
-
-        if (!existingBadge.isActive) {
-          return res.status(400).json({
-            message:
-              "Selected badge is inactive",
-          });
-        }
-      }
+      updateData.badge = await resolveBadgeId(updateData.badge);
     }
 
     if (updateData.basePrice !== undefined) {
@@ -442,7 +467,7 @@ exports.updateProduct = async (req, res) => {
       });
     }
 
-    return res.json(product);
+    return res.json(formatProductBadge(product));
   } catch (error) {
     console.error(
       "Update product error:",
